@@ -17,16 +17,19 @@ import { Formik } from "formik";
 import { useEffect, useState } from "react";
 import { HiMiniShare, HiArrowsUpDown, HiMiniAdjustmentsVertical, HiMiniPlusCircle, HiCheck } from "react-icons/hi2"
 import {isEmpty} from "lodash/lang.js";
-import {isBoolean} from "lodash";
+import {isBoolean, isNumber} from "lodash";
 import {SiTicktick} from "react-icons/si";
 import {RiCloseCircleLine} from "react-icons/ri";
+import {FaSearch} from "react-icons/fa";
+import {useSearchParams} from "react-router-dom";
 
 
 export default function ListView({
   data, currentPage, totalPages, onPageChange, pagination,
   renderFilters, onFilterApply, renderCreator, onItemSelect,
   presntationFields: presentationFields, renderItemModal, ItemModal,
-  CreatorModal, renderSortModal, onSortApply
+  CreatorModal,
+  isSearchable = false, onSearch
 }) {
   const [openShareModal, setOpenShareModal] = useState(false);
   const [openFilterModal, setOpenFilterModal] = useState(false);
@@ -35,16 +38,37 @@ export default function ListView({
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openItemModal, setOpenItemModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   return (
     <>
       <div className="relative grid grid-rows-12 h-full w-full overflow-hidden p-8">
+        {isSearchable && (
+          <div className="w-full mb-2 row-end-1">
+            <form id={"search-data-form"} className="relative" onSubmit={(e) => {
+              e.preventDefault();
+              onSearch && onSearch(document.getElementById("search-data-input").value);
+            }}>
+              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                <FaSearch className="w-5 h-5 text-gray-400"/>
+              </div>
+              <input type="search" id="search-data-input"
+                     className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                     placeholder="Tìm kiếm"/>
+              <button type="submit"
+                      className="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                Tìm kiếm
+              </button>
+            </form>
+          </div>
+        )}
         <div className="flex justify-between items-center px-2">
           <div className="w-16 flex justify-start py-2">
             <Button color="gray" className="w-full" onClick={() => {
               setOpenCreateModal(true);
             }}>
-              <HiMiniPlusCircle className="w-5 h-5" />
+              <HiMiniPlusCircle className="w-5 h-5"/>
             </Button>
             {/*<ButtonGroup>*/}
             {/*  <Button color="gray" className="w-full" onClick={() => {*/}
@@ -125,7 +149,7 @@ export default function ListView({
                     {
                       presentationFields
                         ? presentationFields.map((field, index) => (
-                          <Table.Cell key={index}>
+                          <Table.Cell key={index} className={"text-zinc-700"}>
                             {(() => {
                               const value = item[field.key];
 
@@ -133,7 +157,7 @@ export default function ListView({
                                 return value ? <SiTicktick style={{color: "green"}}/> : <RiCloseCircleLine style={{color: "red"}}/>;
                               }
 
-                              if (isEmpty(value)) {
+                              if (isEmpty(value) && !isNumber(value)) {
                                 return "Chưa cập nhật";
                               }
 
@@ -255,12 +279,50 @@ export default function ListView({
         </Modal.Header>
 
         <Modal.Body>
-          {renderSortModal?.()}
+          {/*{renderSortModal?.()}*/}
+          <div className="flex gap-2 align-middle">
+            <Label htmlFor={"sortBy"} value={"Sắp xếp theo"} style={{alignContent: "center"}}/>
+            <Select
+              id="sortBy"
+              onChange={(e) => {
+                if (!e.target.value) {
+                  searchParams.delete("sortBy");
+                  searchParams.delete("order");
+                  return;
+                }
+                searchParams.set("sortBy", e.target.value);
+              }}
+              defaultValue={searchParams.get("sortBy") || ""}
+            >
+              <option value={""}>Mặc định</option>
+              {presentationFields.map(field => (
+                <option key={field.key} value={field.key}>{field.label}</option>
+              ))}
+            </Select>
+            <Label htmlFor={"order"} value={"Thứ tự"} style={{alignContent: "center"}}/>
+            <Select
+              id="order"
+              onChange={(e) => {
+                if (!e.target.value) {
+                  searchParams.delete("order");
+                  searchParams.delete("sortBy");
+                  return;
+                }
+                searchParams.set("order", e.target.value);
+              }}
+              defaultValue={searchParams.get("order") || ""}
+            >
+              <option value={""}>Mặc định</option>
+              <option value="asc">Tăng dần</option>
+              <option value="desc">Giảm dần</option>
+            </Select>
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button color="blue" onClick={() => {
             setOpenSortModal(false);
-            onSortApply?.();
+            // onSortApply?.();
+            setSearchParams(searchParams);
           }}>Áp dụng</Button>
           <Button color="gray" onClick={() => setOpenSortModal(false)}>Đóng</Button>
         </Modal.Footer>

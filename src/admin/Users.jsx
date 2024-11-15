@@ -9,6 +9,7 @@ import {useFormik} from "formik";
 import * as Yup from "yup";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {parseFilters, stringifyFilters} from "../helpers/filtersParser.js";
+import moment from "moment";
 
 const presentationFields = [
   {
@@ -30,6 +31,14 @@ const presentationFields = [
   {
     key: "active",
     label: "Trạng thái",
+  },
+  {
+    key: "createdAt",
+    label: "Ngày tạo",
+  },
+  {
+    key: "updatedAt",
+    label: "Ngày cập nhật",
   }
 ]
 
@@ -231,11 +240,11 @@ function UpdateUserForm({ item }) {
       <div className={"flex gap-2"}>
         <Button type="submit" color="blue">
           <MdOutlinePublishedWithChanges className="mr-2 h-5 w-5" />
-          Cập nhật thông tin
+          Cập nhật
         </Button>
         <Button type="button" color="failure" onClick={() => deleteUser(id)}>
           <MdDelete className="mr-2 h-5 w-5" />
-          Xoá người dùng
+          Xoá
         </Button>
       </div>
     </form>
@@ -466,14 +475,16 @@ export default function AdminUserManager() {
           order: searchParams.get("order"),
         }
       });
-
+      console.log(res.data.docs);
       setUsers(res.data.docs.map(user => ({
         id: user._id,
         name: user.name,
         email: user.email,
         phone: user.phone,
         role: roles[user.role],
-        active: user.active
+        active: user.active,
+        createdAt: moment(user.createdAt).format("HH:mm, DD/MM/YYYY"),
+        updatedAt: moment(user.updatedAt).format("HH:mm, DD/MM/YYYY"),
       })));
 
       setPagination({
@@ -553,47 +564,6 @@ export default function AdminUserManager() {
         }}
         onFilterApply={() => {
           setSearchParams(searchParams);
-        }}
-        renderSortModal={() => {
-          return (
-            <div className="flex gap-2 align-middle">
-              <Label htmlFor={"sortBy"} value={"Sắp xếp theo"} style={{alignContent: "center"}} />
-              <Select
-                id="sortBy"
-                onChange={(e) => {
-                  if (!e.target.value) {
-                    searchParams.delete("sortBy");
-                    searchParams.delete("order");
-                    return;
-                  }
-                  searchParams.set("sortBy", e.target.value);
-                }}
-                defaultValue={searchParams.get("sortBy") || ""}
-              >
-                <option value={""}>Mặc định</option>
-                {presentationFields.map(field => (
-                  <option key={field.key} value={field.key}>{field.label}</option>
-                ))}
-              </Select>
-              <Label htmlFor={"order"} value={"Thứ tự"} style={{alignContent: "center"}} />
-              <Select
-                id="order"
-                onChange={(e) => {
-                  if (!e.target.value) {
-                    searchParams.delete("order");
-                    searchParams.delete("sortBy");
-                    return;
-                  }
-                  searchParams.set("order", e.target.value);
-                }}
-                defaultValue={searchParams.get("order") || ""}
-              >
-                <option value={""}>Mặc định</option>
-                <option value="asc">Tăng dần</option>
-                <option value="desc">Giảm dần</option>
-              </Select>
-            </div>
-          )
         }}
         onSortApply={() => {
           setSearchParams(searchParams);

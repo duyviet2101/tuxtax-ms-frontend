@@ -2,13 +2,13 @@ import ListView from "../comps/ListView.jsx";
 import React, {useEffect, useState} from "react";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {axios} from "../services/requests.js";
-import {roles} from "../constants/user.js";
 import pushToast from "../helpers/sonnerToast.js";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import {Button, FileInput, Label, Spinner, Textarea, TextInput} from "flowbite-react";
 import {MdDelete, MdOutlinePublishedWithChanges} from "react-icons/md";
 import {IoAddCircleOutline} from "react-icons/io5";
+import moment from "moment";
 
 const presentationFields = [
   {
@@ -23,11 +23,19 @@ const presentationFields = [
     key: "description",
     label: "Mô tả"
   },
+  {
+    key: "createdAt",
+    label: "Ngày tạo"
+  },
+  {
+    key: "updatedAt",
+    label: "Ngày cập nhật"
+  }
 ]
 
 function UpdateCategoryForm({ item }) {
   const { id } = item;
-  const [category, setCategory] = useState(item);
+  const [category, setCategory] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const navigate = useNavigate();
   const [isUploading, setIsUploading] = useState(false);
@@ -49,7 +57,7 @@ function UpdateCategoryForm({ item }) {
       image: category?.image || "",
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("Tên phân loại là bắt buộc"),
+      name: Yup.string().required("Tên danh mục là bắt buộc"),
       description: Yup.string().required("Mô tả là bắt buộc"),
       image: Yup.string().required("Hình ảnh là bắt buộc"),
     }),
@@ -88,14 +96,14 @@ function UpdateCategoryForm({ item }) {
 
   const deleteCategory = async (id) => {
     try {
-      const sure = window.confirm("Bạn có chắc chắn muốn xóa phân loại này?");
+      const sure = window.confirm("Bạn có chắc chắn muốn xóa danh mục này?");
       if (!sure) return;
 
       await axios.delete(`/categories/${id}`);
-      pushToast("Xóa phân loại dùng thành công", "success");
+      pushToast("Xóa danh mục thành công", "success");
       navigate(0);
     } catch (error) {
-      console.error("Error deleting user:", error);
+      console.error("Error deleting category:", error);
       pushToast(error.message, "error");
     }
   }
@@ -203,11 +211,11 @@ function UpdateCategoryForm({ item }) {
       <div className={"flex gap-2"}>
         <Button type="submit" color="blue">
           <MdOutlinePublishedWithChanges className="mr-2 h-5 w-5"/>
-          {isUploading ? <Spinner size="sm"/> : "Cập nhật danh mục"}
+          {isUploading ? <Spinner size="sm"/> : "Cập nhật"}
         </Button>
         <Button type="button" color="failure" onClick={() => deleteCategory(id)}>
           <MdDelete className="mr-2 h-5 w-5"/>
-          Xoá phân loại
+          Xoá
         </Button>
       </div>
 
@@ -227,7 +235,7 @@ function CreateCategoryForm() {
       image: "",
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("Tên phân loại là bắt buộc"),
+      name: Yup.string().required("Tên danh mục là bắt buộc"),
       description: Yup.string().required("Mô tả là bắt buộc"),
       image: Yup.string().required("Hình ảnh là bắt buộc"),
     }),
@@ -389,7 +397,9 @@ export default function CategoriesManager() {
       setCategories(res?.data?.docs?.map(category => ({
         ...category,
          id: category._id,
-        image: <img src={category.image} alt={category.name} style={{width: 50, height: 50}}/>
+        image: <img src={category.image} alt={category.name} style={{width: 50, height: 50}}/>,
+        createdAt: moment(category.createdAt).format("HH:mm, DD/MM/YYYY"),
+        updatedAt: moment(category.updatedAt).format("HH:mm, DD/MM/YYYY"),
       })));
 
       setPagination({

@@ -28,7 +28,7 @@ export default function AdminLayout() {
               <Link to="users">Người dùng</Link>
             </Sidebar.Item>
             <Sidebar.Item icon={TbCategoryFilled}>
-              <Link to="categories">Phân loại</Link>
+              <Link to="categories">Danh mục</Link>
             </Sidebar.Item>
             <Sidebar.Item icon={HiViewBoards}>
               <Link to="products">Sản phẩm</Link>

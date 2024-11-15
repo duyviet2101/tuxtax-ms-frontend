@@ -1,4 +1,5 @@
 import {
+  Badge,
   Button,
   ButtonGroup,
   Checkbox,
@@ -22,6 +23,8 @@ import {SiTicktick} from "react-icons/si";
 import {RiCloseCircleLine} from "react-icons/ri";
 import {FaSearch} from "react-icons/fa";
 import {useSearchParams} from "react-router-dom";
+import {HiClock} from "react-icons/hi";
+import {parseFilters} from "../helpers/filtersParser.js";
 
 
 export default function ListView({
@@ -40,6 +43,9 @@ export default function ListView({
   const [selectedItem, setSelectedItem] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
+  const filtersCount = Object.keys(parseFilters(searchParams.get("filters") || "")).length || 0;
+  const isSorted = searchParams.has("sortBy") && searchParams.has("order");
+
   return (
     <>
       <div className="relative grid grid-rows-12 h-full w-full overflow-hidden p-8">
@@ -54,7 +60,9 @@ export default function ListView({
               </div>
               <input type="search" id="search-data-input"
                      className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                     placeholder="Tìm kiếm"/>
+                     placeholder="Tìm kiếm"
+                     defaultValue={searchParams.get("search") || ""}
+              />
               <button type="submit"
                       className="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
@@ -63,6 +71,18 @@ export default function ListView({
             </form>
           </div>
         )}
+        {(filtersCount || isSorted) && <div className={"flex flex-wrap gap-2 row-end-2"}>
+          {filtersCount > 0 && (
+            <Badge className="text-sm" icon={HiMiniAdjustmentsVertical}>
+              {filtersCount} bộ lọc
+            </Badge>
+          )}
+          {isSorted && (
+            <Badge color="pink" className="text-sm" icon={HiArrowsUpDown}>
+              Đã sắp xếp
+            </Badge>
+          )}
+        </div>}
         <div className="flex justify-between items-center px-2">
           <div className="w-16 flex justify-start py-2">
             <Button color="gray" className="w-full" onClick={() => {
@@ -100,12 +120,12 @@ export default function ListView({
               <Button color="gray" className="w-full" onClick={() => {
                 setOpenFilterModal(true);
               }}>
-                <HiMiniAdjustmentsVertical className="w-5 h-5" />
+                <HiMiniAdjustmentsVertical className="w-5 h-5"/>
               </Button>
               <Button color="gray" className="w-full" onClick={() => {
                 setOpenSortModal(true);
               }}>
-                <HiArrowsUpDown className="w-5 h-5" />
+                <HiArrowsUpDown className="w-5 h-5"/>
               </Button>
               {/*<Button color="gray" className="w-full" onClick={() => {*/}
               {/*  setOpenShareModal(true);*/}
@@ -139,7 +159,7 @@ export default function ListView({
             </Table.Head>
 
             <Table.Body className="divide-y">
-              { data?.length > 0 ?
+              {data?.length > 0 ?
                 data.map((item, index) => (
                   <Table.Row key={index} onClick={() => {
                     onItemSelect && onItemSelect(item);
@@ -154,7 +174,8 @@ export default function ListView({
                               const value = item[field.key];
 
                               if (isBoolean(value)) {
-                                return value ? <SiTicktick style={{color: "green"}}/> : <RiCloseCircleLine style={{color: "red"}}/>;
+                                return value ? <SiTicktick style={{color: "green"}}/> :
+                                  <RiCloseCircleLine style={{color: "red"}}/>;
                               }
 
                               if (isEmpty(value) && !isNumber(value)) {

@@ -60,7 +60,7 @@ function UpdateFloorForm({item}) {
         navigate(0);
       } catch (error) {
         console.error("Error updating floor:", error);
-        pushToast(error.message, "error");
+        pushToast(error?.response?.data?.message || e?.message, "error");
       }
     },
   });
@@ -75,7 +75,7 @@ function UpdateFloorForm({item}) {
       navigate(0);
     } catch (error) {
       console.error("Error deleting floor:", error);
-      pushToast(error.message, "error");
+      pushToast(error?.response?.data?.message || e?.message, "error");
     }
   }
 
@@ -168,7 +168,7 @@ function CreateFloorForm() {
         window.location.reload();
       } catch (error) {
         console.error("Error creating floor:", error);
-        pushToast(error.message, "error");
+        pushToast(error?.response?.data?.message || e?.message, "error");
       }
     },
   });
@@ -272,8 +272,8 @@ export default function FloorManagement() {
         totalPages: res.data.totalPages
       })
 
-    } catch (e) {
-      pushToast(e.message, "error");
+    } catch (error) {
+      pushToast(error.message, "error");
     }
   };
 

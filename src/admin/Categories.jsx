@@ -90,7 +90,7 @@ function UpdateCategoryForm({ item }) {
         navigate(0);
       } catch (error) {
         console.error("Lỗi khi cập nhật danh mục:", error);
-        pushToast(error.message, "error");
+        pushToast(error?.response?.data?.message || e?.message, "error");
       } finally {
         setIsUploading(false);
       }
@@ -107,7 +107,7 @@ function UpdateCategoryForm({ item }) {
       navigate(0);
     } catch (error) {
       console.error("Error deleting category:", error);
-      pushToast(error.message, "error");
+      pushToast(error?.response?.data?.message || e?.message, "error");
     }
   }
 
@@ -291,7 +291,7 @@ function CreateCategoryForm() {
         navigate(0);
       } catch (error) {
         console.error("Lỗi khi tạo danh mục:", error);
-        pushToast(error.message, "error");
+        pushToast(error?.response?.data?.message || e?.message, "error");
       } finally {
         setIsUploading(false);
       }
@@ -466,8 +466,8 @@ export default function CategoriesManager() {
         totalPages: res.data.totalPages
       })
 
-    } catch (e) {
-      pushToast(e.message, "error");
+    } catch (error) {
+      pushToast(error.message, "error");
     }
   };
 

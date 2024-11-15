@@ -127,7 +127,7 @@ function UpdateProductForm({item}) {
         navigate(0);
       } catch (error) {
         console.error("Lỗi khi cập nhật sản phẩm:", error);
-        pushToast(error.message, "error");
+        pushToast(error?.response?.data?.message || e?.message, "error");
       } finally {
         setIsUploading(false);
       }
@@ -144,7 +144,7 @@ function UpdateProductForm({item}) {
       navigate(0);
     } catch (error) {
       console.error("Error deleting product:", error);
-      pushToast(error.message, "error");
+      pushToast(error?.response?.data?.message || e?.message, "error");
     }
   }
 
@@ -433,7 +433,7 @@ function CreateProductForm() {
         navigate(0);
       } catch (error) {
         console.error("Lỗi khi thêm sản phẩm:", error);
-        pushToast(error.message, "error");
+        pushToast(error?.response?.data?.message || e?.message, "error");
       } finally {
         setIsUploading(false);
       }
@@ -693,8 +693,8 @@ export default function ProductsManager() {
         totalPages: res.data.totalPages
       })
 
-    } catch (e) {
-      pushToast(e.message, "error");
+    } catch (error) {
+      pushToast(error.message, "error");
     }
   };
 

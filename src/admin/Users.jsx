@@ -81,7 +81,7 @@ function UpdateUserForm({ item }) {
         navigate(0);
       } catch (error) {
         console.error("Error updating user:", error);
-        pushToast(error.message, "error");
+        pushToast(error?.response?.data?.message || e?.message, "error");
       }
     },
   });
@@ -96,7 +96,7 @@ function UpdateUserForm({ item }) {
       navigate(0);
     } catch (error) {
       console.error("Error deleting user:", error);
-      pushToast(error.message, "error");
+      pushToast(error?.response?.data?.message || e?.message, "error");
     }
   }
 
@@ -282,7 +282,7 @@ function CreateUserForm() {
         navigate(0);
       } catch (error) {
         console.error("Error creating user:", error);
-        pushToast(error.message, "error");
+        pushToast(error?.response?.data?.message || e?.message, "error");
       }
     },
   });
@@ -494,8 +494,8 @@ export default function AdminUserManager() {
         totalPages: res.data.totalPages
       })
 
-    } catch (e) {
-      pushToast(e.message, "error");
+    } catch (error) {
+      pushToast(error?.response?.data?.message || e?.message, "error");
     }
   };
 

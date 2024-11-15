@@ -8,7 +8,6 @@ import {Button, Label, Radio, Select, TextInput} from "flowbite-react";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import {useNavigate, useSearchParams} from "react-router-dom";
-import {isEmpty} from "lodash/lang.js";
 import {parseFilters, stringifyFilters} from "../helpers/filtersParser.js";
 
 const presentationFields = [
@@ -34,7 +33,7 @@ const presentationFields = [
   }
 ]
 
-function UpdateForm({ item }) {
+function UpdateUserForm({ item }) {
   const { id } = item;
   const [data, setData] = useState(null);
   const navigate = useNavigate();
@@ -108,10 +107,17 @@ function UpdateForm({ item }) {
             value={formik.values.name}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
+            helperText={
+              formik.touched.name && formik.errors.name
+                ? formik.errors.name
+                : ""
+            }
+            color={
+              formik.touched.name && formik.errors.name
+                ? "failure"
+                : "gray"
+            }
           />
-          {formik.touched.name && formik.errors.name && (
-            <div className="text-red-500 text-sm">{formik.errors.name}</div>
-          )}
         </div>
 
         {/* Email Field */}
@@ -127,10 +133,17 @@ function UpdateForm({ item }) {
             value={formik.values.email}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
+            helperText={
+              formik.touched.email && formik.errors.email
+                ? formik.errors.email
+                : ""
+            }
+            color={
+              formik.touched.email && formik.errors.email
+                ? "failure"
+                : "gray"
+            }
           />
-          {formik.touched.email && formik.errors.email && (
-            <div className="text-red-500 text-sm">{formik.errors.email}</div>
-          )}
         </div>
 
         {/* Phone Field */}
@@ -146,10 +159,17 @@ function UpdateForm({ item }) {
             value={formik.values.phone}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
+            helperText={
+              formik.touched.phone && formik.errors.phone
+                ? formik.errors.phone
+                : ""
+            }
+            color={
+              formik.touched.phone && formik.errors.phone
+                ? "failure"
+                : "gray"
+            }
           />
-          {formik.touched.phone && formik.errors.phone && (
-            <div className="text-red-500 text-sm">{formik.errors.phone}</div>
-          )}
         </div>
 
         {/* Role Field */}
@@ -163,14 +183,21 @@ function UpdateForm({ item }) {
             value={formik.values.role}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
+            helperText={
+              formik.touched.role && formik.errors.role
+                ? formik.errors.role
+                : ""
+            }
+            color={
+              formik.touched.role && formik.errors.role
+                ? "failure"
+                : "gray"
+            }
           >
             <option value="">Chọn vai trò</option>
             <option value="admin">Quản lý</option>
             <option value="staff">Nhân viên</option>
           </Select>
-          {formik.touched.role && formik.errors.role && (
-            <div className="text-red-500 text-sm">{formik.errors.role}</div>
-          )}
         </div>
 
         {/* Active Status Field */}
@@ -215,7 +242,7 @@ function UpdateForm({ item }) {
   );
 }
 
-function NewUserForm() {
+function CreateUserForm() {
   const navigate = useNavigate();
 
   const formik = useFormik({
@@ -265,10 +292,17 @@ function NewUserForm() {
             value={formik.values.name}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
+            helperText={
+              formik.touched.name && formik.errors.name
+                ? formik.errors.name
+                : ""
+            }
+            color={
+              formik.touched.name && formik.errors.name
+                ? "failure"
+                : "gray"
+            }
           />
-          {formik.touched.name && formik.errors.name && (
-            <div className="text-red-500 text-sm">{formik.errors.name}</div>
-          )}
         </div>
 
         {/* Email Field */}
@@ -284,10 +318,17 @@ function NewUserForm() {
             value={formik.values.email}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
+            helperText={
+              formik.touched.email && formik.errors.email
+                ? formik.errors.email
+                : ""
+            }
+            color={
+              formik.touched.email && formik.errors.email
+                ? "failure"
+                : "gray"
+            }
           />
-          {formik.touched.email && formik.errors.email && (
-            <div className="text-red-500 text-sm">{formik.errors.email}</div>
-          )}
         </div>
 
         {/* Phone Field */}
@@ -303,10 +344,17 @@ function NewUserForm() {
             value={formik.values.phone}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
+            helperText={
+              formik.touched.phone && formik.errors.phone
+                ? formik.errors.phone
+                : ""
+            }
+            color={
+              formik.touched.phone && formik.errors.phone
+                ? "failure"
+                : "gray"
+            }
           />
-          {formik.touched.phone && formik.errors.phone && (
-            <div className="text-red-500 text-sm">{formik.errors.phone}</div>
-          )}
         </div>
 
         <div className={"col-span-2"}>
@@ -321,6 +369,16 @@ function NewUserForm() {
             value={formik.values.password}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
+            helperText={
+              formik.touched.password && formik.errors.password
+                ? formik.errors.password
+                : ""
+            }
+            color={
+              formik.touched.password && formik.errors.password
+                ? "failure"
+                : "gray"
+            }
           />
         </div>
 
@@ -335,14 +393,21 @@ function NewUserForm() {
             value={formik.values.role}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
+            helperText={
+              formik.touched.role && formik.errors.role
+                ? formik.errors.role
+                : ""
+            }
+            color={
+              formik.touched.role && formik.errors.role
+                ? "failure"
+                : "gray"
+            }
           >
             <option value="">Chọn vai trò</option>
             <option value="admin">Quản lý</option>
             <option value="staff">Nhân viên</option>
           </Select>
-          {formik.touched.role && formik.errors.role && (
-            <div className="text-red-500 text-sm">{formik.errors.role}</div>
-          )}
         </div>
 
         {/* Active Status Field */}
@@ -536,8 +601,8 @@ export default function AdminUserManager() {
         renderCreator={() => { }}
         onItemSelect={() => { }}
         presntationFields={presentationFields}
-        ItemModal={UpdateForm}
-        CreatorModal={NewUserForm}
+        ItemModal={UpdateUserForm}
+        CreatorModal={CreateUserForm}
       />
     </div>
   )

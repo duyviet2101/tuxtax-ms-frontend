@@ -4,6 +4,8 @@ import {
   HiArrowSmRight, HiChartPie, HiInbox,
   HiShoppingBag, HiTable, HiUser, HiViewBoards
 } from "react-icons/hi";
+import {FaLayerGroup} from "react-icons/fa";
+import {TbCategoryFilled} from "react-icons/tb";
 
 export default function AdminLayout() {
   return (
@@ -11,9 +13,9 @@ export default function AdminLayout() {
       <Sidebar className="fixed w-64 bg-gray-200 shadow-lg z-40">
         <Sidebar.Items>
           <Sidebar.ItemGroup>
-            <Sidebar.Logo img="/vite.svg">
+            <Sidebar.Logo img="/Logo-tuxtax.jpg">
               <Link to="/admin">
-                <span className="text-xl font-bold text-gray-800">Admin UI</span>
+                <span className="text-xl font-bold text-gray-800">Quản lý Tuxtax</span>
               </Link>
             </Sidebar.Logo>
             <Sidebar.Item icon={HiChartPie}>
@@ -23,16 +25,22 @@ export default function AdminLayout() {
               <Link to="notifications">Notifications</Link>
             </Sidebar.Item>
             <Sidebar.Item icon={HiUser}>
-              <Link to="users">Users</Link>
+              <Link to="users">Người dùng</Link>
+            </Sidebar.Item>
+            <Sidebar.Item icon={TbCategoryFilled}>
+              <Link to="categories">Phân loại</Link>
             </Sidebar.Item>
             <Sidebar.Item icon={HiViewBoards}>
-              <Link to="products">Products</Link>
+              <Link to="products">Sản phẩm</Link>
             </Sidebar.Item>
             <Sidebar.Item icon={HiShoppingBag}>
-              <Link to="orders">Orders</Link>
+              <Link to="orders">Đơn hàng</Link>
+            </Sidebar.Item>
+            <Sidebar.Item icon={FaLayerGroup}>
+              <Link to="floors">Tầng</Link>
             </Sidebar.Item>
             <Sidebar.Item icon={HiTable}>
-              <Link to="tables">Tables</Link>
+              <Link to="tables">Bàn</Link>
             </Sidebar.Item>
           </Sidebar.ItemGroup>
         </Sidebar.Items>

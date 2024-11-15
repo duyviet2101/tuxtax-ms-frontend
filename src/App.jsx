@@ -8,12 +8,13 @@ import AdminDashboard from './admin/Dashboard'
 import AdminNotification from './admin/Notification'
 import AdminOrders from './admin/Orders'
 import ClientOrder from './client/ClientOrder'
-import TablesManager from './admin/Tables'
-import ProductsManager from './admin/Products'
+import TablesManager from './admin/Tables.jsx'
+import ProductsManager from './admin/Products.jsx'
 import ContextProvider from "./contexts/ContextProvider.jsx";
 import ProtectedRoute from "./comps/ProtectedRoute.jsx";
 import Login from "./admin/Login.jsx";
 import {Toaster} from "sonner";
+import CategoriesManager from "./admin/Categories.jsx";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="notifications" element={<AdminNotification />} />
               <Route path="users" element={<AdminUserManager />} />
+              <Route path="categories" element={<CategoriesManager />} />
               <Route path="products" element={<ProductsManager />} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="tables" element={<TablesManager />} />

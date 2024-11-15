@@ -5,10 +5,11 @@ import {axios} from "../services/requests.js";
 import pushToast from "../helpers/sonnerToast.js";
 import {useFormik} from "formik";
 import * as Yup from "yup";
-import {Button, FileInput, Label, Spinner, Textarea, TextInput} from "flowbite-react";
+import {Button, FileInput, Label, Radio, Spinner, Textarea, TextInput} from "flowbite-react";
 import {MdDelete, MdOutlinePublishedWithChanges} from "react-icons/md";
 import {IoAddCircleOutline} from "react-icons/io5";
 import moment from "moment";
+import {FaEye, FaEyeSlash} from "react-icons/fa";
 
 const presentationFields = [
   {
@@ -20,8 +21,8 @@ const presentationFields = [
     label: "Tên"
   },
   {
-    key: "description",
-    label: "Mô tả"
+    key: "active",
+    label: "Trạng thái"
   },
   {
     key: "createdAt",
@@ -55,6 +56,7 @@ function UpdateCategoryForm({ item }) {
       name: category?.name || "",
       description: category?.description || "",
       image: category?.image || "",
+      active: category?.active || false,
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Tên danh mục là bắt buộc"),
@@ -81,6 +83,7 @@ function UpdateCategoryForm({ item }) {
           name: values.name,
           description: values.description,
           image: uploadedImageUrl,
+          active: values.active,
         });
 
         pushToast("Cập nhật danh mục thành công", "success");
@@ -206,6 +209,31 @@ function UpdateCategoryForm({ item }) {
             }
           />
         </div>
+        <fieldset className="col-span-2">
+          <legend className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+            Trạng thái
+          </legend>
+          <div className="flex items-center gap-2">
+            <Radio
+              id="active"
+              name="active"
+              value={true}
+              checked={formik.values.active === true}
+              onChange={() => formik.setFieldValue("active", true)}
+            />
+            <Label htmlFor="active">Hiển thị</Label>
+          </div>
+          <div className="flex items-center gap-2">
+            <Radio
+              id="inactive"
+              name="active"
+              value={false}
+              checked={formik.values.active === false}
+              onChange={() => formik.setFieldValue("active", false)}
+            />
+            <Label htmlFor="inactive">Ẩn</Label>
+          </div>
+        </fieldset>
       </div>
 
       <div className={"flex gap-2"}>
@@ -233,6 +261,7 @@ function CreateCategoryForm() {
       name: "",
       description: "",
       image: "",
+      active: false
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Tên danh mục là bắt buộc"),
@@ -255,6 +284,7 @@ function CreateCategoryForm() {
           name: values.name,
           description: values.description,
           image: uploadedImageUrl,
+          active: values.active,
         });
 
         pushToast("Tạo danh mục thành công", "success");
@@ -364,6 +394,33 @@ function CreateCategoryForm() {
             }
           />
         </div>
+
+        <fieldset className="col-span-2">
+          <legend className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+            Trạng thái
+          </legend>
+          <div className="flex items-center gap-2">
+            <Radio
+              id="active"
+              name="active"
+              value={true}
+              checked={formik.values.active === true}
+              onChange={() => formik.setFieldValue("active", true)}
+            />
+            <Label htmlFor="active">Hiển thị</Label>
+          </div>
+          <div className="flex items-center gap-2">
+            <Radio
+              id="inactive"
+              name="active"
+              value={false}
+              checked={formik.values.active === false}
+              onChange={() => formik.setFieldValue("active", false)}
+            />
+            <Label htmlFor="inactive">Ẩn</Label>
+          </div>
+        </fieldset>
+
       </div>
 
       <Button type="submit" color="blue">
@@ -396,10 +453,11 @@ export default function CategoriesManager() {
 
       setCategories(res?.data?.docs?.map(category => ({
         ...category,
-         id: category._id,
+        id: category._id,
         image: <img src={category.image} alt={category.name} style={{width: 50, height: 50}}/>,
         createdAt: moment(category.createdAt).format("HH:mm, DD/MM/YYYY"),
         updatedAt: moment(category.updatedAt).format("HH:mm, DD/MM/YYYY"),
+        active: categoryStatus[category.active]
       })));
 
       setPagination({
@@ -444,4 +502,19 @@ export default function CategoriesManager() {
       />
     </div>
   );
+}
+
+const categoryStatus = {
+  true: <div className={"flex gap-2 items-center"}>
+    <FaEye className="text-green-500"/>
+    <span>
+      Hiển thị
+    </span>
+  </div>,
+  false: <div className={"flex gap-2 items-center"}>
+    <FaEyeSlash className="text-red-500"/>
+    <span>
+      Ẩn
+    </span>
+  </div>
 }

@@ -15,6 +15,7 @@ import ProtectedRoute from "./comps/ProtectedRoute.jsx";
 import Login from "./admin/Login.jsx";
 import {Toaster} from "sonner";
 import CategoriesManager from "./admin/Categories.jsx";
+import FloorManagement from "./admin/Floor.jsx";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
               <Route path="categories" element={<CategoriesManager />} />
               <Route path="products" element={<ProductsManager />} />
               <Route path="orders" element={<AdminOrders />} />
+              <Route path="floors" element={<FloorManagement/>} />
               <Route path="tables" element={<TablesManager />} />
               <Route path="*" element={<div>404</div>} />
             </Route>

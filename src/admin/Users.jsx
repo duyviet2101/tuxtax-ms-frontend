@@ -1,5 +1,5 @@
 import ListView from "../comps/ListView";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {axios} from "../services/requests.js";
 import pushToast from "../helpers/sonnerToast.js";
 import {roles} from "../constants/user.js";
@@ -10,6 +10,8 @@ import * as Yup from "yup";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import {parseFilters, stringifyFilters} from "../helpers/filtersParser.js";
 import moment from "moment";
+import {SiTicktick} from "react-icons/si";
+import {RiCloseCircleLine} from "react-icons/ri";
 
 const presentationFields = [
   {
@@ -475,14 +477,13 @@ export default function AdminUserManager() {
           order: searchParams.get("order"),
         }
       });
-      console.log(res.data.docs);
       setUsers(res.data.docs.map(user => ({
         id: user._id,
         name: user.name,
         email: user.email,
         phone: user.phone,
         role: roles[user.role],
-        active: user.active,
+        active: userStatus[user.active],
         createdAt: moment(user.createdAt).format("HH:mm, DD/MM/YYYY"),
         updatedAt: moment(user.updatedAt).format("HH:mm, DD/MM/YYYY"),
       })));
@@ -576,4 +577,19 @@ export default function AdminUserManager() {
       />
     </div>
   )
+}
+
+const userStatus = {
+  true: <div className={"flex gap-2 items-center"}>
+    <SiTicktick className="text-green-500"/>
+    <span>
+      Đang hoạt động
+    </span>
+  </div>,
+  false: <div className={"flex gap-2 items-center"}>
+    <RiCloseCircleLine className="text-red-500"/>
+    <span>
+      Bị khoá
+    </span>
+  </div>
 }

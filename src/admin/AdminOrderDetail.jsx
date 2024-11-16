@@ -25,7 +25,7 @@ function ProductOrderCard({
 
   const onDeleteProductInOrder = async () => {
     try {
-      const res = await axios.delete(`/orders/${orderId}/products/${product.product._id}`);
+      const res = await axios.delete(`/orders/${orderId}/products/${product.product._id}?option=${product.option}`);
       pushToast("Xoá món thành công", "success");
       await fetchOrder();
     } catch (error) {
@@ -41,7 +41,8 @@ function ProductOrderCard({
       }
       const res = await axios.patch(`/orders/${orderId}/products`, {
         product: product.product._id,
-        quantity
+        quantity,
+        option: product.option
       });
       pushToast("Cập nhật số lượng thành công", "success");
       await fetchOrder();
@@ -58,7 +59,8 @@ function ProductOrderCard({
       }
       const res = await axios.patch(`/orders/${orderId}/products`, {
         product: product.product._id,
-        price: newPrice
+        price: newPrice,
+        option: product.option
       });
       pushToast("Cập nhật giá thành công", "success");
       await fetchOrder();
@@ -72,7 +74,8 @@ function ProductOrderCard({
     try {
       const res = await axios.patch(`/orders/${orderId}/products`, {
         product: product.product._id,
-        status
+        status,
+        option: product.option
       });
       pushToast("Cập nhật trạng thái thành công", "success");
       await fetchOrder();

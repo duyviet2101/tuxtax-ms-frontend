@@ -15,32 +15,29 @@ export default function AdminLayout() {
           <Sidebar.ItemGroup>
             <Sidebar.Logo img="/Logo-tuxtax.jpg">
               <Link to="/admin">
-                <span className="text-xl font-bold text-gray-800">Quản lý Tuxtax</span>
+                <span className="text-xl font-bold text-gray-800 text-wrap">TUXTAX ẨM THỰC THÁI LAN</span>
               </Link>
             </Sidebar.Logo>
             <Sidebar.Item icon={HiChartPie}>
               <Link to="dashboard">Dashboard</Link>
             </Sidebar.Item>
-            <Sidebar.Item icon={HiInbox} label="3">
-              <Link to="notifications">Notifications</Link>
-            </Sidebar.Item>
             <Sidebar.Item icon={HiShoppingBag}>
               <Link to="orders">QL Orders</Link>
             </Sidebar.Item>
             <Sidebar.Item icon={HiUser}>
-              <Link to="users">Người dùng</Link>
+              <Link to="users">QL nhân viên</Link>
             </Sidebar.Item>
             <Sidebar.Item icon={TbCategoryFilled}>
-              <Link to="categories">Danh mục</Link>
+              <Link to="categories">QL danh mục</Link>
             </Sidebar.Item>
             <Sidebar.Item icon={HiViewBoards}>
-              <Link to="products">Sản phẩm</Link>
+              <Link to="products">QL thực đơn</Link>
             </Sidebar.Item>
             <Sidebar.Item icon={FaLayerGroup}>
-              <Link to="floors">Tầng</Link>
+              <Link to="floors">QL tầng</Link>
             </Sidebar.Item>
             <Sidebar.Item icon={HiTable}>
-              <Link to="tables">Bàn</Link>
+              <Link to="tables">QL bàn</Link>
             </Sidebar.Item>
           </Sidebar.ItemGroup>
         </Sidebar.Items>

@@ -135,10 +135,10 @@ function UpdateProductForm({item}) {
           options: values.options,
         });
 
-        pushToast("Cập nhật sản phẩm thành công", "success");
+        pushToast("Cập nhật món thành công", "success");
         navigate(0);
       } catch (error) {
-        console.error("Lỗi khi cập nhật sản phẩm:", error);
+        console.error("Lỗi khi cập nhật món:", error);
         pushToast(error?.response?.data?.message || e?.message, "error");
       } finally {
         setIsUploading(false);
@@ -148,11 +148,11 @@ function UpdateProductForm({item}) {
 
   const deleteProduct = async (id) => {
     try {
-      const sure = window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này?");
+      const sure = window.confirm("Bạn có chắc chắn muốn xóa món này?");
       if (!sure) return;
 
       await axios.delete(`/products/${id}`);
-      pushToast("Xóa sản phẩm thành công", "success");
+      pushToast("Xóa món thành công", "success");
       navigate(0);
     } catch (error) {
       console.error("Error deleting product:", error);
@@ -180,7 +180,7 @@ function UpdateProductForm({item}) {
       <div className="grid gap-4 mb-4 grid-cols-2">
         <div className="col-span-2">
           <div className="mb-2">
-            <Label htmlFor="image" value="Ảnh sản phẩm"/>
+            <Label htmlFor="image" value="Ảnh món"/>
           </div>
           <FileInput
             id={"image"}
@@ -212,13 +212,13 @@ function UpdateProductForm({item}) {
 
         <div className="col-span-2">
           <div className="mb-2">
-            <Label htmlFor="name" value="Tên sản phẩm"/>
+            <Label htmlFor="name" value="Tên món"/>
           </div>
           <TextInput
             type="text"
             id="name"
             name="name"
-            placeholder="Tên sản phẩm"
+            placeholder="Tên món"
             value={formik.values.name}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -461,7 +461,7 @@ function CreateProductForm() {
       options: []
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("Tên sản phẩm là bắt buộc"),
+      name: Yup.string().required("Tên món là bắt buộc"),
       description: Yup.string().required("Mô tả là bắt buộc"),
       image: Yup.string().required("Hình ảnh là bắt buộc"),
       price: Yup.number().required("Giá là bắt buộc"),
@@ -493,10 +493,10 @@ function CreateProductForm() {
           options: values.options,
         });
 
-        pushToast("Thêm sản phẩm thành công", "success");
+        pushToast("Thêm món thành công", "success");
         navigate(0);
       } catch (error) {
-        console.error("Lỗi khi thêm sản phẩm:", error);
+        console.error("Lỗi khi thêm món:", error);
         pushToast(error?.response?.data?.message || e?.message, "error");
       } finally {
         setIsUploading(false);
@@ -522,7 +522,7 @@ function CreateProductForm() {
       <div className="grid gap-4 mb-4 grid-cols-2">
         <div className="col-span-2">
           <div className="mb-2">
-            <Label htmlFor="image" value="Ảnh sản phẩm"/>
+            <Label htmlFor="image" value="Ảnh món"/>
           </div>
           <FileInput
             id={"image"}
@@ -554,13 +554,13 @@ function CreateProductForm() {
 
         <div className="col-span-2">
           <div className="mb-2">
-            <Label htmlFor="name" value="Tên sản phẩm"/>
+            <Label htmlFor="name" value="Tên món"/>
           </div>
           <TextInput
             type="text"
             id="name"
             name="name"
-            placeholder="Tên sản phẩm"
+            placeholder="Tên món"
             value={formik.values.name}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}

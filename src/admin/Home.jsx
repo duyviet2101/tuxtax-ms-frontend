@@ -1,7 +1,9 @@
 import { Card } from "flowbite-react";
-import { HiArchive, HiChartBar, HiInbox, HiUser, HiViewBoards } from "react-icons/hi";
+import {HiArchive, HiChartBar, HiChartPie, HiInbox, HiShoppingBag, HiTable, HiUser, HiViewBoards} from "react-icons/hi";
 import { HiAcademicCap, HiArrowUpOnSquareStack } from "react-icons/hi2";
 import { Link } from "react-router-dom";
+import {TbCategoryFilled} from "react-icons/tb";
+import {FaLayerGroup} from "react-icons/fa";
 
 function AdminDashboardItemCard({ icon, title, description }) {
   return (
@@ -28,61 +30,69 @@ export default function AdminHome() {
   return (
     <div className="h-full w-full p-6 flex items-center overflow-scrool">
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 auto-rows-max w-full gap-2">
-        <Link to="/admin/notifications" className="col-span-2">
+        <Link to="/admin/orders" className="col-span-2">
           <AdminDashboardItemCard
-            icon={<HiInbox className="w-12 h-12 text-gray-800" />}
-            title="Notifications"
-            description="Notifications and alerts"
+            icon={<HiShoppingBag className="w-12 h-12 text-gray-800" />}
+            title="Orders"
+            description="Quản lý Orders"
+          />
+        </Link>
+
+        <Link to="/admin/dashboard">
+          <AdminDashboardItemCard
+            icon={<HiChartPie className="w-12 h-12 text-gray-800" />}
+            title="Dashboard"
+            description="Thống kê và báo cáo"
           />
         </Link>
 
         <Link to="/admin/users">
           <AdminDashboardItemCard
             icon={<HiUser className="w-12 h-12 text-gray-800" />}
-            title="Users"
-            description="Manage users and roles"
+            title="Nhân viên"
+            description="Quản lý nhân viên"
           />
         </Link>
 
         <Link to="/admin/products">
           <AdminDashboardItemCard
             icon={<HiViewBoards className="w-12 h-12 text-gray-800" />}
-            title="Products"
-            description="Products"
+            title="Thực đơn"
+            description="Quản lý thực đơn"
           />
         </Link>
 
-        <Link to="/admin/orders">
+        <Link to="/admin/categories">
           <AdminDashboardItemCard
-            icon={<HiArchive className="w-12 h-12 text-gray-800" />}
-            title="Orders"
-            description="Orders and sales"
+            icon={<TbCategoryFilled className="w-12 h-12 text-gray-800" />}
+            title="Danh mục"
+            description="Quản lý danh mục"
+          />
+        </Link>
+
+        <Link to="/admin/floors">
+          <AdminDashboardItemCard
+            icon={<FaLayerGroup className="w-12 h-12 text-gray-800" />}
+            title="Tầng"
+            description="Quản lý tầng"
           />
         </Link>
 
         <Link to="/admin/tables">
           <AdminDashboardItemCard
-            icon={<HiAcademicCap className="w-12 h-12 text-gray-800" />}
-            title="Tables"
-            description="Tables and data"
+            icon={<HiTable className="w-12 h-12 text-gray-800" />}
+            title="Bàn"
+            description="Quản lý bàn"
           />
         </Link>
 
-        <Link to="/admin/analysis">
-          <AdminDashboardItemCard
-            icon={<HiChartBar className="w-12 h-12 text-gray-800" />}
-            title="Analysis"
-            description="Analysis and reports"
-          />
-        </Link>
-
-        <Link to="/admin/signout" className="text-red-400">
-          <AdminDashboardItemCard
-            icon={<HiArrowUpOnSquareStack className="w-12 h-12 text-red-400" />}
-            title="Sign Out"
-            description="Sign out of admin"
-          />
-        </Link>
+        {/*<Link to="/admin/signout" className="text-red-400">*/}
+        {/*  <AdminDashboardItemCard*/}
+        {/*    icon={<HiArrowUpOnSquareStack className="w-12 h-12 text-red-400" />}*/}
+        {/*    title="Sign Out"*/}
+        {/*    description="Sign out of admin"*/}
+        {/*  />*/}
+        {/*</Link>*/}
       </div>
     </div>
   )

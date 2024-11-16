@@ -146,12 +146,12 @@ export default function ListView({
               {
                 presentationFields
                   ? presentationFields.map((field, index) => (
-                    <Table.HeadCell key={index}>
+                    <Table.HeadCell key={index} className={"bg-blue-400 border"}>
                       {field.label}
                     </Table.HeadCell>
                   ))
                   : Object.keys(data[0]).map((key, index) => (
-                    <Table.HeadCell key={index}>
+                    <Table.HeadCell key={index} className={"bg-blue-400 border"}>
                       {key}
                     </Table.HeadCell>
                   ))
@@ -169,7 +169,7 @@ export default function ListView({
                     {
                       presentationFields
                         ? presentationFields.map((field, index) => (
-                          <Table.Cell key={index} className={"text-zinc-700"}>
+                          <Table.Cell key={index} className={"text-zinc-700 border"}>
                             {(() => {
                               const value = item[field.key];
 
@@ -190,7 +190,7 @@ export default function ListView({
                           </Table.Cell>
                         ))
                         : Object.keys(item).map((key, index) => (
-                          <Table.Cell key={index}>
+                          <Table.Cell key={index} className={"border"}>
                             {item[key]}
                           </Table.Cell>
                         ))
@@ -199,7 +199,7 @@ export default function ListView({
                 ))
                 :
                 (<Table.Row>
-                  <Table.Cell colSpan={presentationFields?.length || Object.keys(data[0]).length}>
+                  <Table.Cell className={"border"} colSpan={presentationFields?.length || Object.keys(data[0]).length}>
                     <div className="flex justify-center items-center">
                       <span>Không có dữ liệu</span>
                     </div>

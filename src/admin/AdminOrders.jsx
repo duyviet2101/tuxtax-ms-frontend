@@ -119,10 +119,9 @@ export default function AdminOrders() {
 }
 
 const colorsButton = [
-  "purpleToBlue",
+  "cyanToBlue",
   "greenToBlue",
+  "purpleToBlue",
   "purpleToPink",
   "pinkToOrange",
-  "tealToLime",
-  "redToYellow"
 ]

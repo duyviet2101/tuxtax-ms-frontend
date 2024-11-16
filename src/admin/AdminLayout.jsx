@@ -45,7 +45,7 @@ export default function AdminLayout() {
           </Sidebar.ItemGroup>
         </Sidebar.Items>
       </Sidebar>
-      <div className="fixed pl-64 flex-col w-full h-full text-gray-900">
+      <div className="fixed pl-64 flex-col w-full h-full text-gray-900 overflow-auto relative">
         <Outlet />
       </div>
     </div>

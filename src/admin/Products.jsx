@@ -10,6 +10,8 @@ import {MdDelete, MdOutlinePublishedWithChanges} from "react-icons/md";
 import {FaEye, FaEyeSlash} from "react-icons/fa";
 import {parseFilters, stringifyFilters} from "../helpers/parsers.js";
 import moment from "moment";
+import {IoAddCircle} from "react-icons/io5";
+import {FaCircleMinus} from "react-icons/fa6";
 
 const presentationFields = [
   {
@@ -53,6 +55,7 @@ function UpdateProductForm({item}) {
   const navigate = useNavigate();
   const [isUploading, setIsUploading] = useState(false);
   const [categories, getCategories] = useState([]);
+  const [options, setOptions] = useState([]);
 
 
   useEffect(() => {
@@ -61,6 +64,7 @@ function UpdateProductForm({item}) {
         const res = await axios.get(`/products/${id}`);
         setProduct(res?.data);
         setImagePreview(res?.data?.image);
+        setOptions(res?.data?.options);
       } catch (error) {
         console.error("Error fetching product:", error);
         pushToast(error?.response?.data?.message || e?.message, "error");
@@ -92,6 +96,7 @@ function UpdateProductForm({item}) {
       quantity: product?.quantity || "",
       category: product?.category?._id || "",
       status: product?.status || "",
+      options: product?.options || [],
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Tên danh mục là bắt buộc"),
@@ -101,6 +106,7 @@ function UpdateProductForm({item}) {
       quantity: Yup.number().required("Số lượng là bắt buộc"),
       category: Yup.string().required("Danh mục là bắt buộc"),
       status: Yup.string().required("Trạng thái là bắt buộc"),
+      options: Yup.array().of(Yup.string()),
     }),
     onSubmit: async (values) => {
       setIsUploading(true);
@@ -126,6 +132,7 @@ function UpdateProductForm({item}) {
           quantity: values.quantity,
           category: values.category,
           status: values.status,
+          options: values.options,
         });
 
         pushToast("Cập nhật sản phẩm thành công", "success");
@@ -357,6 +364,54 @@ function UpdateProductForm({item}) {
             <Label htmlFor="not_available">Ẩn</Label>
           </div>
         </fieldset>
+
+        <div className="col-span-2">
+          <div className="mb-2">
+            <Label htmlFor="options" value="Tùy chọn"/>
+          </div>
+          <div className="grid gap-2 grid-cols-2">
+            {options?.map((option, index) => (
+              <div key={index} className={"flex gap-2"}>
+                <TextInput
+                  className="w-full"
+                  type="text"
+                  id={`options.${index}`}
+                  name={`options.${index}`}
+                  placeholder="Cay, Không cay..."
+                  value={option}
+                  onChange={(e) => {
+                    const newOptions = [...options];
+                    newOptions[index] = e.target.value;
+                    setOptions(newOptions);
+                    formik.setFieldValue("options", newOptions);
+                  }}
+                />
+                <Button
+                  color="failure"
+                  onClick={() => {
+                    const newOptions = [...options];
+                    newOptions.splice(index, 1);
+                    setOptions(newOptions);
+                    formik.setFieldValue("options", newOptions);
+                  }}
+                >
+                  <FaCircleMinus className="h-5 w-5"/>
+                </Button>
+              </div>
+            ))}
+            <div>
+              <Button
+                color="blue"
+                onClick={() => {
+                  setOptions([...options, ""]);
+                  formik.setFieldValue("options", [...options, ""]);
+                }}
+              >
+                <IoAddCircle className="h-5 w-5"/>
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className={"flex gap-2"}>
@@ -379,6 +434,7 @@ function CreateProductForm() {
   const [isUploading, setIsUploading] = useState(false);
   const [categories, getCategories] = useState([]);
   const navigate = useNavigate();
+  const [options, setOptions] = useState([]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -402,6 +458,7 @@ function CreateProductForm() {
       quantity: "",
       category: "",
       status: "available",
+      options: []
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Tên sản phẩm là bắt buộc"),
@@ -411,6 +468,7 @@ function CreateProductForm() {
       quantity: Yup.number().required("Số lượng là bắt buộc"),
       category: Yup.string().required("Danh mục là bắt buộc"),
       status: Yup.string().required("Trạng thái là bắt buộc"),
+      options: Yup.array().of(Yup.string()),
     }),
     onSubmit: async (values) => {
       setIsUploading(true);
@@ -432,6 +490,7 @@ function CreateProductForm() {
           quantity: values.quantity,
           category: values.category,
           status: values.status,
+          options: values.options,
         });
 
         pushToast("Thêm sản phẩm thành công", "success");
@@ -647,6 +706,55 @@ function CreateProductForm() {
             <Label htmlFor="not_available">Ẩn</Label>
           </div>
         </fieldset>
+
+        <div className="col-span-2">
+          <div className="mb-2">
+            <Label htmlFor="options" value="Tùy chọn"/>
+          </div>
+          <div className="grid gap-2 grid-cols-2">
+            {options.map((option, index) => (
+              <div key={index} className={"flex gap-2"}>
+                <TextInput
+                  className="w-full"
+                  type="text"
+                  id={`options.${index}`}
+                  name={`options.${index}`}
+                  placeholder="Cay, Không cay..."
+                  value={option}
+                  onChange={(e) => {
+                    const newOptions = [...options];
+                    newOptions[index] = e.target.value;
+                    setOptions(newOptions);
+                    formik.setFieldValue("options", newOptions);
+                  }}
+                />
+                <Button
+                  color="failure"
+                  onClick={() => {
+                    const newOptions = [...options];
+                    newOptions.splice(index, 1);
+                    setOptions(newOptions);
+                    formik.setFieldValue("options", newOptions);
+                  }}
+                >
+                  <FaCircleMinus className="h-5 w-5"/>
+                </Button>
+              </div>
+            ))}
+            <div>
+              <Button
+                color="blue"
+                onClick={() => {
+                  setOptions([...options, ""]);
+                  formik.setFieldValue("options", [...options, ""]);
+                }}
+              >
+                <IoAddCircle className="h-5 w-5"/>
+              </Button>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <div className={"flex gap-2"}>

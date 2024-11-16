@@ -8,7 +8,7 @@ import * as Yup from "yup";
 import {Button, FileInput, Label, Radio, Select, Spinner, Textarea, TextInput} from "flowbite-react";
 import {MdDelete, MdOutlinePublishedWithChanges} from "react-icons/md";
 import {FaEye, FaEyeSlash} from "react-icons/fa";
-import {parseFilters, stringifyFilters} from "../helpers/filtersParser.js";
+import {parseFilters, stringifyFilters} from "../helpers/parsers.js";
 import moment from "moment";
 
 const presentationFields = [
@@ -57,9 +57,14 @@ function UpdateProductForm({item}) {
 
   useEffect(() => {
     const fetchProduct = async () => {
-      const res = await axios.get(`/products/${id}`);
-      setProduct(res?.data);
-      setImagePreview(res?.data?.image);
+      try {
+        const res = await axios.get(`/products/${id}`);
+        setProduct(res?.data);
+        setImagePreview(res?.data?.image);
+      } catch (error) {
+        console.error("Error fetching product:", error);
+        pushToast(error?.response?.data?.message || e?.message, "error");
+      }
     }
     fetchProduct();
   }, [id]);

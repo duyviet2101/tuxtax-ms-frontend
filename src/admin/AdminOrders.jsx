@@ -3,31 +3,39 @@ import {FaCartArrowDown, FaHistory} from "react-icons/fa";
 import {useEffect, useState} from "react";
 import {axios} from "../services/requests.js";
 import {isNull} from "lodash";
-import { MdTableRestaurant } from "react-icons/md";
+import {MdOutlinePendingActions, MdTableRestaurant} from "react-icons/md";
+import {useNavigate} from "react-router-dom";
+import pushToast from "../helpers/sonnerToast.js";
+import {formatVND} from "../helpers/parsers.js";
 
 export default function AdminOrders() {
   const [floors, setFloors] = useState([]);
   const [tables, setTables] = useState([]);
   const [selectedFloor, setSelectedFloor] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFloors = async () => {
-      const res = await axios.get('/floors', {
-        params: {
-          limit: 100,
-          page: 1
-        }
-      })
-      res?.data?.docs.sort((a, b) => {
-        if (a.active && !b.active) {
-          return -1;
-        }
-        if (!a.active && b.active) {
-          return 1;
-        }
-        return 0;
-      });
-      setFloors(res?.data?.docs);
+      try {
+        const res = await axios.get('/floors', {
+          params: {
+            limit: 100,
+            page: 1
+          }
+        })
+        res?.data?.docs.sort((a, b) => {
+          if (a.active && !b.active) {
+            return -1;
+          }
+          if (!a.active && b.active) {
+            return 1;
+          }
+          return 0;
+        });
+        setFloors(res?.data?.docs);
+      } catch (error) {
+        pushToast(error?.response?.data?.message || e?.message, "error");
+      }
     }
     fetchFloors();
   }, []);
@@ -85,6 +93,11 @@ export default function AdminOrders() {
                 {tables.map((table) => (
                   <div key={table._id}
                        className={`bg-${table?.order ? "blue" : "gray"}-100 rounded-2xl p-4 flex flex-col items-center justify-center cursor-pointer`}
+                       onClick={() => {
+                          if (table?.order) {
+                            navigate(`/admin/orders/${table.order._id}`);
+                          }
+                       }}
                   >
                     <span
                       className={`text-center dark:text-gray-200 text-black`}>{`${formatVND(table?.order?.total) || "Trống"}`}</span>
@@ -113,11 +126,3 @@ const colorsButton = [
   "tealToLime",
   "redToYellow"
 ]
-
-const formatVND = (amount) => {
-  const number = parseFloat(amount);
-  if (isNaN(number)) {
-    return null;
-  }
-  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(number);
-};

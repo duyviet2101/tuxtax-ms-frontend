@@ -10,7 +10,7 @@ import {useFormik} from "formik";
 import * as Yup from "yup";
 import {Button, Label, Radio, Select, TextInput} from "flowbite-react";
 import {MdDelete, MdOutlinePublishedWithChanges} from "react-icons/md";
-import {parseFilters, stringifyFilters} from "../helpers/filtersParser.js";
+import {parseFilters, stringifyFilters} from "../helpers/parsers.js";
 
 const presentationFields = [
   {
@@ -38,8 +38,12 @@ function UpdateFloorForm({item}) {
 
   useEffect(() => {
     const fetchFloor = async () => {
-      const res = await axios.get(`/floors/${id}`);
-      setFloor(res.data);
+      try {
+        const res = await axios.get(`/floors/${id}`);
+        setFloor(res.data);
+      } catch (error) {
+        pushToast(error?.response?.data?.message || e?.message, "error");
+      }
     };
     fetchFloor();
   }, [id]);

@@ -5,7 +5,7 @@ import moment from "moment";
 import pushToast from "../helpers/sonnerToast.js";
 import ListView from "../comps/ListView.jsx";
 import {Button, Label, Radio, Select, TextInput} from "flowbite-react";
-import {parseFilters, stringifyFilters} from "../helpers/filtersParser.js";
+import {parseFilters, stringifyFilters} from "../helpers/parsers.js";
 import {SiTicktick} from "react-icons/si";
 import {RiCloseCircleLine} from "react-icons/ri";
 import {useFormik} from "formik";
@@ -47,8 +47,12 @@ function UpdateTableForm({ item }) {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const res = await axios.get(`/tables/${id}`);
-      setData(res.data);
+      try {
+        const res = await axios.get(`/tables/${id}`);
+        setData(res.data);
+      } catch (error) {
+        pushToast(error?.response?.data?.message || e?.message, "error");
+      }
     };
     fetchUser();
   }, [id]);

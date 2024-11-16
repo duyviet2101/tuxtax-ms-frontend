@@ -6,7 +6,7 @@ import AdminHome from './admin/Home'
 import AdminUserManager from './admin/Users'
 import AdminDashboard from './admin/Dashboard'
 import AdminNotification from './admin/Notification'
-import AdminOrders from './admin/Orders'
+import AdminOrders from './admin/AdminOrders.jsx'
 import ClientOrder from './client/ClientOrder'
 import TablesManager from './admin/Tables.jsx'
 import ProductsManager from './admin/Products.jsx'
@@ -16,6 +16,7 @@ import Login from "./admin/Login.jsx";
 import {Toaster} from "sonner";
 import CategoriesManager from "./admin/Categories.jsx";
 import FloorManagement from "./admin/Floor.jsx";
+import AdminOrderDetail from "./admin/AdminOrderDetail.jsx";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
               <Route path="categories" element={<CategoriesManager />} />
               <Route path="products" element={<ProductsManager />} />
               <Route path="orders" element={<AdminOrders />} />
+              <Route path="orders/:id" element={<AdminOrderDetail />} />
               <Route path="floors" element={<FloorManagement/>} />
               <Route path="tables" element={<TablesManager />} />
               <Route path="*" element={<div>404</div>} />

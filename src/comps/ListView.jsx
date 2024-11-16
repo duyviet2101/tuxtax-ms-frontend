@@ -24,7 +24,7 @@ import {RiCloseCircleLine} from "react-icons/ri";
 import {FaSearch} from "react-icons/fa";
 import {useSearchParams} from "react-router-dom";
 import {HiClock} from "react-icons/hi";
-import {parseFilters} from "../helpers/filtersParser.js";
+import {parseFilters} from "../helpers/parsers.js";
 
 
 export default function ListView({

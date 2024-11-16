@@ -43,9 +43,13 @@ function UpdateCategoryForm({ item }) {
 
   useEffect(() => {
     const fetchCategory = async () => {
-      const res = await axios.get(`/categories/${id}`);
-      setCategory(res?.data?.category);
-      setImagePreview(res?.data?.category?.image);
+      try {
+        const res = await axios.get(`/categories/${id}`);
+        setCategory(res?.data?.category);
+        setImagePreview(res?.data?.category?.image);
+      } catch (error) {
+        pushToast(error?.response?.data?.message || e?.message, "error");
+      }
     }
     fetchCategory();
   }, [id]);

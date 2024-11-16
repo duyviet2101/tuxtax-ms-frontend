@@ -28,3 +28,11 @@ export const stringifyFilters = (filterObject) => {
     })
     .join(",");
 };
+
+export const formatVND = (amount) => {
+  const number = parseFloat(amount);
+  if (isNaN(number)) {
+    return null;
+  }
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(number);
+};

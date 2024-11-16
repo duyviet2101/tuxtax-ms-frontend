@@ -8,7 +8,7 @@ import {Button, Label, Radio, Select, TextInput} from "flowbite-react";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import {useNavigate, useSearchParams} from "react-router-dom";
-import {parseFilters, stringifyFilters} from "../helpers/filtersParser.js";
+import {parseFilters, stringifyFilters} from "../helpers/parsers.js";
 import moment from "moment";
 import {SiTicktick} from "react-icons/si";
 import {RiCloseCircleLine} from "react-icons/ri";

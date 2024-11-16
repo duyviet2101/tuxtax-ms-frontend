@@ -34,7 +34,7 @@ export default function AdminOrders() {
         });
         setFloors(res?.data?.docs);
       } catch (error) {
-        pushToast(error?.response?.data?.message || e?.message, "error");
+        pushToast(error?.response?.data?.message || error?.message, "error");
       }
     }
     fetchFloors();
@@ -94,16 +94,18 @@ export default function AdminOrders() {
                   <div key={table._id}
                        className={`bg-${table?.order ? "blue" : "gray"}-100 rounded-2xl p-4 flex flex-col items-center justify-center cursor-pointer`}
                        onClick={() => {
-                          if (table?.order) {
-                            navigate(`/admin/orders/${table.order._id}`);
-                          }
+                         if (table?.order) {
+                           navigate(`/admin/orders/${table.order._id}`);
+                         }
                        }}
                   >
                     <span
-                      className={`text-center dark:text-gray-200 text-black`}>{`${formatVND(table?.order?.total) || "Trống"}`}</span>
+                      className={`text-center dark:text-gray-200 text-black`}>{`${formatVND(table?.order?.total) || (table?.active ? "Trống" : "Không hoạt động")}`}</span>
                     <MdTableRestaurant size={80} className={`text-${table?.order ? "blue" : "gray"}-500`}/>
                     <span
                       className={`text-center font-bold dark:text-gray-200 text-black`}>{`${table.floor.slug}-${table.name}`}</span>
+                    <span
+                      className={`text-center dark:text-gray-200 text-black`}>({`${table.capacity} chỗ`})</span>
                   </div>
                 ))}
               </div>

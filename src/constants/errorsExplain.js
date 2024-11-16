@@ -3,7 +3,16 @@ const errorsExplain = {
   'wrong_password': "Sai mật khẩu!",
   'account_not_active': "Tài khoản bị khoá!",
   'token_not_found': "Vui lòng đăng nhập lại!",
-  'unauthorized': "Không có quyền truy cập!"
+  'unauthorized': "Không có quyền truy cập!",
+  'quantity_not_enough': "Số lượng không đủ!",
+  'table_not_existed': "Bàn không tồn tại!",
+  'floor_not_existed': "Tầng không tồn tại!",
+  'category_not_existed': "Danh mục không tồn tại!",
+  'order_not_existed': "Order không tồn tại!",
+  'category_has_products': "Danh mục đang chứa sản phẩm!",
+  'user_existed': "Người dùng đã tồn tại!",
+  'data_missing': "Dữ liệu không đủ!",
+  'data_required': "Dữ liệu bắt buộc!",
 }
 
 export default errorsExplain;

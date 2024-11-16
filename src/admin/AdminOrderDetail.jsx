@@ -29,7 +29,7 @@ function ProductOrderCard({
       pushToast("Xoá món thành công", "success");
       await fetchOrder();
     } catch (error) {
-      pushToast(error?.response?.data?.message || e?.message, "error");
+      pushToast(error?.response?.data?.message ||error?.message, "error");
     }
   }
 
@@ -47,7 +47,7 @@ function ProductOrderCard({
       pushToast("Cập nhật số lượng thành công", "success");
       await fetchOrder();
     } catch (error) {
-      pushToast(error?.response?.data?.message || e?.message, "error");
+      pushToast(error?.response?.data?.message || error?.message, "error");
     }
   }
 
@@ -66,7 +66,7 @@ function ProductOrderCard({
       await fetchOrder();
       setOpenModalEditPrice(false);
     } catch (error) {
-      pushToast(error?.response?.data?.message || e?.message, "error");
+      pushToast(error?.response?.data?.message || error?.message, "error");
     }
   }
 
@@ -80,7 +80,7 @@ function ProductOrderCard({
       pushToast("Cập nhật trạng thái thành công", "success");
       await fetchOrder();
     } catch (error) {
-      pushToast(error?.response?.data?.message || e?.message, "error");
+      pushToast(error?.response?.data?.message || error?.message, "error");
     }
   }
 
@@ -211,13 +211,14 @@ export default function AdminOrderDetail() {
   const [order, setOrder] = useState(null);
   const navigate = useNavigate();
   const [openModalAddProduct, setOpenModalAddProduct] = useState(false);
+  const [openModalChangeTable, setOpenModalChangeTable] = useState(false);
 
   const fetchOrder = async () => {
     try {
       const res = await axios.get(`/orders/${id}`);
       setOrder(res.data)
     } catch (error) {
-      pushToast(error?.response?.data?.message || e?.message, "error");
+      pushToast(error?.response?.data?.message || error?.message, "error");
     }
   }
 
@@ -268,7 +269,11 @@ export default function AdminOrderDetail() {
             <div className={"flex gap-2"}>
               <Button className={"w-full text-lg font-bold"} size={"lg"} gradientDuoTone={"cyanToBlue"}>Thanh toán</Button>
               <Button className={"w-full text-lg font-bold"} size={"lg"} gradientDuoTone={"greenToBlue"} onClick={() => setOpenModalAddProduct(true)}>Thêm món</Button>
-              <Button className={"w-full text-lg font-bold"} size={"lg"} gradientDuoTone={"purpleToBlue"}>Chuyển bàn</Button>
+              <Button className={"w-full text-lg font-bold"}
+                      size={"lg"}
+                      gradientDuoTone={"purpleToBlue"}
+                      onClick={() => setOpenModalChangeTable(true)}
+              >Chuyển bàn</Button>
               <Button className={"w-full text-lg font-bold"} size={"lg"} gradientDuoTone={"purpleToPink"}>Tách bàn</Button>
             </div>
           </div>
@@ -279,7 +284,7 @@ export default function AdminOrderDetail() {
             <div className="flex flex-col gap-2">
               {
                 order?.products?.map((product) => (
-                  <ProductOrderCard product={product} key={product.product._id} orderId={order._id}
+                  <ProductOrderCard product={product} key={`${product.product._id}_${product.option}`} orderId={order._id}
                                     fetchOrder={fetchOrder}/>
                 ))
               }
@@ -288,12 +293,19 @@ export default function AdminOrderDetail() {
         </div>
       </div>
 
-      <ModalAddProduct
+      {openModalAddProduct && <ModalAddProduct
         openModalAddProduct={openModalAddProduct}
         setOpenModalAddProduct={setOpenModalAddProduct}
         orderId={order._id}
         fetchOrder={fetchOrder}
-      />
+      />}
+
+      {openModalChangeTable && <ModalChangeTable
+        openModalChangeTable={openModalChangeTable}
+        setOpenModalChangeTable={setOpenModalChangeTable}
+        fetchOrder={fetchOrder}
+        orderId={order._id}
+      />}
     </>
   )
 }
@@ -313,13 +325,13 @@ function ModalAddProduct({
         params: {
           search,
           page: 1,
-          limit: 100
+          limit: 100,
+          filters: "status:available"
         }
       })
-      console.log(res.data)
       setProducts(res?.data?.docs)
     } catch (error) {
-      pushToast(error?.response?.data?.message || e?.message, "error");
+      pushToast(error?.response?.data?.message || error?.message, "error");
     }
   }
 
@@ -362,7 +374,7 @@ function ModalAddProduct({
           </div>
             <div className="flex flex-col gap-2 mt-8">
               {products.length > 0 ? products.map((product, index) => (
-                  <div className="bg-blue-100 p-4 rounded-lg flex gap-4 text-black items-center">
+                  <div className="bg-blue-100 p-4 rounded-lg flex gap-4 text-black items-center" key={index}>
                     <img src={product.image} className={"size-32 object-cover rounded-lg shadow-lg"}/>
                     <form
                       className="flex flex-col gap-1 justify-around"
@@ -385,9 +397,10 @@ function ModalAddProduct({
                           })
                           pushToast("Thêm món thành công", "success");
                           await fetchOrder();
+                          await fetchProducts();
                         }
                         catch (error) {
-                          pushToast(error?.response?.data?.message || e?.message || "Lỗi!", "error");
+                          pushToast(error?.response?.data?.message || error?.message || "Lỗi!", "error");
                         }
 
                       }}
@@ -402,8 +415,8 @@ function ModalAddProduct({
                           className={"flex flex-wrap gap-2"}
                           id={`option.${product._id}`}
                         >
-                          {product.options.map((option) => (
-                            <option value={option} color={"blue"}>{option}</option>
+                          {product.options.map((option, index) => (
+                            <option key={index} value={option} color={"blue"}>{option}</option>
                           ))}
                         </Select>
                       </div>
@@ -434,6 +447,76 @@ function ModalAddProduct({
       </Modal.Body>
       <Modal.Footer>
         <Button color={"gray"} onClick={() => setOpenModalAddProduct(false)}>Đóng</Button>
+      </Modal.Footer>
+    </Modal>
+  )
+}
+
+function ModalChangeTable({
+  openModalChangeTable = false,
+  setOpenModalChangeTable = () => { },
+  fetchOrder = () => { },
+  orderId = null,
+}) {
+  const [tables, setTables] = useState([]);
+  const [selectedTable, setSelectedTable] = useState("");
+
+  useEffect(() => {
+    const fetchTables = async () => {
+      try {
+        const res = await axios.get('/tables', {
+          params: {
+            limit: 100,
+            page: 1,
+            filters: "active:true"
+          }
+        })
+        setTables(res?.data?.docs?.filter((table) => !table?.order));
+      } catch (error) {
+        pushToast(error?.response?.data?.message || error?.message, "error");
+      }
+    }
+    fetchTables();
+  }, []);
+
+  const onChangeTable = async () => {
+    if (!selectedTable) {
+      pushToast("Chọn bàn mới trước!", "error");
+      return;
+    }
+    try {
+      const res = await axios.patch(`/orders/${orderId}`, {
+        table: selectedTable
+      });
+      pushToast("Chuyển bàn thành công", "success");
+      await fetchOrder();
+      setOpenModalChangeTable(false);
+    } catch (error) {
+      pushToast(error?.response?.data?.message || error?.message, "error");
+    }
+  }
+  return (
+    <Modal show={openModalChangeTable} onClose={() => setOpenModalChangeTable(false)}>
+      <Modal.Header>
+        <h1 className="text-2xl font-bold">Chuyển bàn</h1>
+      </Modal.Header>
+      <Modal.Body>
+        <div className="flex flex-col gap-2">
+          <h1 className="text-lg text-gray-800">Chọn bàn mới:</h1>
+          <Select
+            value={selectedTable}
+            onChange={(e) => setSelectedTable(e.target.value)}
+          >
+            <option value={""}>Chọn bàn</option>
+            {tables.map((table) => (
+              <option key={table._id} value={table._id}>{table.floor.slug}-{table.name} ({table.capacity} chỗ)</option>
+            ))}
+          </Select>
+        </div>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button color={"blue"} onClick={onChangeTable}>Chuyển</Button>
+        <Button color={"gray"} onClick={() => setOpenModalChangeTable(false)}>Đóng</Button>
       </Modal.Footer>
     </Modal>
   )

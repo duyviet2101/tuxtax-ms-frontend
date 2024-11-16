@@ -48,7 +48,11 @@ const presentationFields = [
   }
 ]
 
-function UpdateProductForm({item}) {
+function UpdateProductForm({
+  item,
+  setOpenItemModal = () => { },
+  fetchData = () => { }
+}) {
   const { id } = item;
   const [product, setProduct] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -67,7 +71,7 @@ function UpdateProductForm({item}) {
         setOptions(res?.data?.options);
       } catch (error) {
         console.error("Error fetching product:", error);
-        pushToast(error?.response?.data?.message || e?.message, "error");
+        pushToast(error?.response?.data?.message || error?.message, "error");
       }
     }
     fetchProduct();
@@ -136,10 +140,11 @@ function UpdateProductForm({item}) {
         });
 
         pushToast("Cập nhật món thành công", "success");
-        navigate(0);
+        setOpenItemModal(false);
+        fetchData();
       } catch (error) {
         console.error("Lỗi khi cập nhật món:", error);
-        pushToast(error?.response?.data?.message || e?.message, "error");
+        pushToast(error?.response?.data?.message || error?.message, "error");
       } finally {
         setIsUploading(false);
       }
@@ -153,10 +158,11 @@ function UpdateProductForm({item}) {
 
       await axios.delete(`/products/${id}`);
       pushToast("Xóa món thành công", "success");
-      navigate(0);
+      setOpenItemModal(false);
+      fetchData();
     } catch (error) {
       console.error("Error deleting product:", error);
-      pushToast(error?.response?.data?.message || e?.message, "error");
+      pushToast(error?.response?.data?.message || error?.message, "error");
     }
   }
 
@@ -429,7 +435,10 @@ function UpdateProductForm({item}) {
   )
 }
 
-function CreateProductForm() {
+function CreateProductForm({
+  fetchData = () => { },
+  setOpenCreateModal = () => { }
+}) {
   const [imagePreview, setImagePreview] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [categories, getCategories] = useState([]);
@@ -494,10 +503,11 @@ function CreateProductForm() {
         });
 
         pushToast("Thêm món thành công", "success");
-        navigate(0);
+        setOpenCreateModal(false);
+        fetchData();
       } catch (error) {
         console.error("Lỗi khi thêm món:", error);
-        pushToast(error?.response?.data?.message || e?.message, "error");
+        pushToast(error?.response?.data?.message || error?.message, "error");
       } finally {
         setIsUploading(false);
       }
@@ -904,6 +914,7 @@ export default function ProductsManager() {
           searchParams.set("search", value);
           setSearchParams(searchParams);
         }}
+        fetchData={fetchProducts}
       />
     </div>
   );

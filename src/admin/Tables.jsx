@@ -39,7 +39,11 @@ const presentationFields = [
   },
 ]
 
-function UpdateTableForm({ item }) {
+function UpdateTableForm({
+  item,
+  setOpenItemModal = () => { },
+  fetchData = () => { }
+}) {
   const { id } = item;
   const [data, setData] = useState(null);
   const navigate = useNavigate();
@@ -51,7 +55,7 @@ function UpdateTableForm({ item }) {
         const res = await axios.get(`/tables/${id}`);
         setData(res.data);
       } catch (error) {
-        pushToast(error?.response?.data?.message || e?.message, "error");
+        pushToast(error?.response?.data?.message || error?.message, "error");
       }
     };
     fetchUser();
@@ -86,10 +90,11 @@ function UpdateTableForm({ item }) {
       try {
         await axios.patch(`/tables/${id}`, values);
         pushToast("Cập nhật thành công", "success");
-        navigate(0);
+        setOpenItemModal(false);
+        fetchData();
       } catch (error) {
         console.error("Error updating table:", error);
-        pushToast(error?.response?.data?.message || e?.message, "error");
+        pushToast(error?.response?.data?.message || error?.message, "error");
       }
     },
   });
@@ -99,12 +104,13 @@ function UpdateTableForm({ item }) {
       const sure = window.confirm("Bạn có chắc chắn muốn xóa bàn này?");
       if (!sure) return;
 
-      await axios.delete(`/floors/${id}`);
+      await axios.delete(`/tables/${id}`);
       pushToast("Xóa bàn thành công", "success");
-      navigate(0);
+      setOpenItemModal(false);
+      fetchData();
     } catch (error) {
       console.error("Error deleting table:", error);
-      pushToast(error?.response?.data?.message || e?.message, "error");
+      pushToast(error?.response?.data?.message || error?.message, "error");
     }
   }
 
@@ -234,7 +240,10 @@ function UpdateTableForm({ item }) {
   );
 }
 
-function CreateTableForm() {
+function CreateTableForm({
+  fetchData = () => { },
+  setOpenCreateModal = () => { }
+}) {
   const navigate = useNavigate();
   const [floors, setFloors] = useState([]);
 
@@ -266,10 +275,11 @@ function CreateTableForm() {
       try {
         await axios.post("/tables", values);
         pushToast("Tạo bàn thành công", "success");
-        navigate(0);
+        setOpenCreateModal(false);
+        fetchData();
       } catch (error) {
         console.error("Error creating table:", error);
-        pushToast(error?.response?.data?.message || e?.message, "error");
+        pushToast(error?.response?.data?.message || error?.message, "error");
       }
     },
   });
@@ -430,7 +440,7 @@ export default function TablesManager() {
       })
 
     } catch (error) {
-      pushToast(error?.response?.data?.message || e?.message, "error");
+      pushToast(error?.response?.data?.message || error?.message, "error");
     }
   };
 
@@ -529,6 +539,7 @@ export default function TablesManager() {
           searchParams.set("search", value);
           setSearchParams(searchParams);
         }}
+        fetchData={fetchTables}
       />
     </div>
   );

@@ -32,7 +32,8 @@ export default function ListView({
   renderFilters, onFilterApply, renderCreator, onItemSelect,
   presntationFields: presentationFields, renderItemModal, ItemModal,
   CreatorModal,
-  isSearchable = false, onSearch
+  isSearchable = false, onSearch,
+  fetchData
 }) {
   const [openShareModal, setOpenShareModal] = useState(false);
   const [openFilterModal, setOpenFilterModal] = useState(false);
@@ -356,7 +357,7 @@ export default function ListView({
         </Modal.Header>
 
         <Modal.Body>
-          {CreatorModal && <CreatorModal/>}
+          {CreatorModal && <CreatorModal fetchData={fetchData} setOpenCreateModal={setOpenCreateModal}/>}
         </Modal.Body>
         <Modal.Footer>
           <Button color="gray" onClick={() => setOpenCreateModal(false)}>Đóng</Button>
@@ -369,7 +370,7 @@ export default function ListView({
         </Modal.Header>
 
         <Modal.Body>
-          {ItemModal && selectedItem && <ItemModal item={selectedItem}/>}
+          {ItemModal && selectedItem && <ItemModal item={selectedItem} fetchData={fetchData} setOpenItemModal={setOpenItemModal}/>}
         </Modal.Body>
         <Modal.Footer>
           <Button color="gray" onClick={() => setOpenItemModal(false)}>Đóng</Button>

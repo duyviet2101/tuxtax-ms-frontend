@@ -31,7 +31,11 @@ const presentationFields = [
   }
 ]
 
-function UpdateFloorForm({item}) {
+function UpdateFloorForm({
+  item,
+  setOpenItemModal = () => { },
+  fetchData = () => { }
+}) {
   const {id} = item;
   const [floor, setFloor] = useState(null);
   const navigate = useNavigate();
@@ -42,7 +46,7 @@ function UpdateFloorForm({item}) {
         const res = await axios.get(`/floors/${id}`);
         setFloor(res.data);
       } catch (error) {
-        pushToast(error?.response?.data?.message || e?.message, "error");
+        pushToast(error?.response?.data?.message || error?.message, "error");
       }
     };
     fetchFloor();
@@ -61,10 +65,11 @@ function UpdateFloorForm({item}) {
       try {
         await axios.patch(`/floors/${id}`, values);
         pushToast("Cập nhật thành công", "success");
-        navigate(0);
+        setOpenItemModal(false);
+        fetchData();
       } catch (error) {
         console.error("Error updating floor:", error);
-        pushToast(error?.response?.data?.message || e?.message, "error");
+        pushToast(error?.response?.data?.message || error?.message, "error");
       }
     },
   });
@@ -76,10 +81,11 @@ function UpdateFloorForm({item}) {
 
       await axios.delete(`/floors/${id}`);
       pushToast("Xóa tầng thành công", "success");
-      navigate(0);
+      setOpenItemModal(false);
+      fetchData();
     } catch (error) {
       console.error("Error deleting floor:", error);
-      pushToast(error?.response?.data?.message || e?.message, "error");
+      pushToast(error?.response?.data?.message || error?.message, "error");
     }
   }
 
@@ -156,7 +162,10 @@ function UpdateFloorForm({item}) {
   );
 }
 
-function CreateFloorForm() {
+function CreateFloorForm({
+  fetchData = () => { },
+  setOpenCreateModal = () => { }
+}) {
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -169,10 +178,11 @@ function CreateFloorForm() {
       try {
         await axios.post("/floors", values);
         pushToast("Tạo tầng thành công", "success");
-        window.location.reload();
+        setOpenCreateModal(false);
+        fetchData();
       } catch (error) {
         console.error("Error creating floor:", error);
-        pushToast(error?.response?.data?.message || e?.message, "error");
+        pushToast(error?.response?.data?.message || error?.message, "error");
       }
     },
   });
@@ -332,6 +342,7 @@ export default function FloorManagement() {
         presntationFields={presentationFields}
         ItemModal={UpdateFloorForm}
         CreatorModal={CreateFloorForm}
+        fetchData={fetchFloors}
       />
     </div>
   )

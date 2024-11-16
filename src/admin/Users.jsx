@@ -44,7 +44,11 @@ const presentationFields = [
   }
 ]
 
-function UpdateUserForm({ item }) {
+function UpdateUserForm({
+  item,
+  fetchData = () => { },
+  setOpenItemModal = () => { }
+}) {
   const { id } = item;
   const [data, setData] = useState(null);
   const navigate = useNavigate();
@@ -78,10 +82,12 @@ function UpdateUserForm({ item }) {
       try {
         await axios.patch(`/users/${id}`, values);
         pushToast("Cập nhật thành công", "success");
-        navigate(0);
+        // navigate(0);
+        setOpenItemModal(false);
+        fetchData();
       } catch (error) {
         console.error("Error updating user:", error);
-        pushToast(error?.response?.data?.message || e?.message, "error");
+        pushToast(error?.response?.data?.message || error?.message, "error");
       }
     },
   });
@@ -93,10 +99,11 @@ function UpdateUserForm({ item }) {
 
       await axios.delete(`/users/${id}`);
       pushToast("Xóa người dùng thành công", "success");
-      navigate(0);
+      setOpenItemModal(false);
+      fetchData();
     } catch (error) {
       console.error("Error deleting user:", error);
-      pushToast(error?.response?.data?.message || e?.message, "error");
+      pushToast(error?.response?.data?.message || error?.message, "error");
     }
   }
 
@@ -253,7 +260,10 @@ function UpdateUserForm({ item }) {
   );
 }
 
-function CreateUserForm() {
+function CreateUserForm({
+  fetchData = () => { },
+  setOpenCreateModal = () => { }
+}) {
   const navigate = useNavigate();
 
   const formik = useFormik({
@@ -279,10 +289,11 @@ function CreateUserForm() {
         await axios.post("/users", values);
         pushToast("Tạo người dùng mới thành công", "success");
         formik.resetForm();
-        navigate(0);
+        fetchData();
+        setOpenCreateModal(false);
       } catch (error) {
         console.error("Error creating user:", error);
-        pushToast(error?.response?.data?.message || e?.message, "error");
+        pushToast(error?.response?.data?.message || error?.message, "error");
       }
     },
   });
@@ -495,7 +506,7 @@ export default function AdminUserManager() {
       })
 
     } catch (error) {
-      pushToast(error?.response?.data?.message || e?.message, "error");
+      pushToast(error?.response?.data?.message || error?.message, "error");
     }
   };
 
@@ -574,6 +585,7 @@ export default function AdminUserManager() {
         presntationFields={presentationFields}
         ItemModal={UpdateUserForm}
         CreatorModal={CreateUserForm}
+        fetchData={fetchUser}
       />
     </div>
   )

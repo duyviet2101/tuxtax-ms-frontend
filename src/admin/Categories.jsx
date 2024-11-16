@@ -34,7 +34,11 @@ const presentationFields = [
   }
 ]
 
-function UpdateCategoryForm({ item }) {
+function UpdateCategoryForm({
+  item,
+  setOpenItemModal = () => { },
+  fetchData = () => { }
+}) {
   const { id } = item;
   const [category, setCategory] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -48,7 +52,7 @@ function UpdateCategoryForm({ item }) {
         setCategory(res?.data?.category);
         setImagePreview(res?.data?.category?.image);
       } catch (error) {
-        pushToast(error?.response?.data?.message || e?.message, "error");
+        pushToast(error?.response?.data?.message || error?.message, "error");
       }
     }
     fetchCategory();
@@ -91,10 +95,11 @@ function UpdateCategoryForm({ item }) {
         });
 
         pushToast("Cập nhật danh mục thành công", "success");
-        navigate(0);
+        setOpenItemModal(false);
+        fetchData();
       } catch (error) {
         console.error("Lỗi khi cập nhật danh mục:", error);
-        pushToast(error?.response?.data?.message || e?.message, "error");
+        pushToast(error?.response?.data?.message || error?.message, "error");
       } finally {
         setIsUploading(false);
       }
@@ -108,10 +113,11 @@ function UpdateCategoryForm({ item }) {
 
       await axios.delete(`/categories/${id}`);
       pushToast("Xóa danh mục thành công", "success");
-      navigate(0);
+      setOpenItemModal(false);
+      fetchData();
     } catch (error) {
       console.error("Error deleting category:", error);
-      pushToast(error?.response?.data?.message || e?.message, "error");
+      pushToast(error?.response?.data?.message || error?.message, "error");
     }
   }
 
@@ -255,7 +261,10 @@ function UpdateCategoryForm({ item }) {
   )
 }
 
-function CreateCategoryForm() {
+function CreateCategoryForm({
+  fetchData = () => { },
+  setOpenCreateModal = () => { }
+}) {
   const [imagePreview, setImagePreview] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const navigate = useNavigate();
@@ -292,10 +301,11 @@ function CreateCategoryForm() {
         });
 
         pushToast("Tạo danh mục thành công", "success");
-        navigate(0);
+        setOpenCreateModal(false);
+        fetchData();
       } catch (error) {
         console.error("Lỗi khi tạo danh mục:", error);
-        pushToast(error?.response?.data?.message || e?.message, "error");
+        pushToast(error?.response?.data?.message || error?.message, "error");
       } finally {
         setIsUploading(false);
       }
@@ -503,6 +513,7 @@ export default function CategoriesManager() {
         presntationFields={presentationFields}
         ItemModal={UpdateCategoryForm}
         CreatorModal={CreateCategoryForm}
+        fetchData={fetchCategories}
       />
     </div>
   );

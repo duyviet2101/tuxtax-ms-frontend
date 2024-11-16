@@ -24,6 +24,9 @@ export default function AdminLayout() {
             <Sidebar.Item icon={HiInbox} label="3">
               <Link to="notifications">Notifications</Link>
             </Sidebar.Item>
+            <Sidebar.Item icon={HiShoppingBag}>
+              <Link to="orders">QL Orders</Link>
+            </Sidebar.Item>
             <Sidebar.Item icon={HiUser}>
               <Link to="users">Người dùng</Link>
             </Sidebar.Item>
@@ -32,9 +35,6 @@ export default function AdminLayout() {
             </Sidebar.Item>
             <Sidebar.Item icon={HiViewBoards}>
               <Link to="products">Sản phẩm</Link>
-            </Sidebar.Item>
-            <Sidebar.Item icon={HiShoppingBag}>
-              <Link to="orders">Đơn hàng</Link>
             </Sidebar.Item>
             <Sidebar.Item icon={FaLayerGroup}>
               <Link to="floors">Tầng</Link>

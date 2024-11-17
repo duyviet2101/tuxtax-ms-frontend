@@ -212,12 +212,15 @@ export default function AdminOrderDetail() {
   const navigate = useNavigate();
   const [openModalAddProduct, setOpenModalAddProduct] = useState(false);
   const [openModalChangeTable, setOpenModalChangeTable] = useState(false);
+  const [openModalMergeTable, setOpenModalMergeTable] = useState(false);
+  const [openModalSplitTable, setOpenModalSplitTable] = useState(false);
 
   const fetchOrder = async () => {
     try {
       const res = await axios.get(`/orders/${id}`);
       setOrder(res.data)
     } catch (error) {
+      navigate('/admin/orders');
       pushToast(error?.response?.data?.message || error?.message, "error");
     }
   }
@@ -274,7 +277,16 @@ export default function AdminOrderDetail() {
                       gradientDuoTone={"purpleToBlue"}
                       onClick={() => setOpenModalChangeTable(true)}
               >Chuyển bàn</Button>
-              <Button className={"w-full text-lg font-bold"} size={"lg"} gradientDuoTone={"purpleToPink"}>Tách bàn</Button>
+              <Button className={"w-full text-lg font-bold"}
+                      size={"lg"}
+                      gradientDuoTone={"purpleToPink"}
+                      onClick={() => setOpenModalMergeTable(true)}
+              >Ghép bàn</Button>
+              <Button className={"w-full text-lg font-bold"}
+                      size={"lg"}
+                      gradientDuoTone={"pinkToOrange"}
+                      onClick={() => setOpenModalSplitTable(true)}
+              >Tách bàn</Button>
             </div>
           </div>
           <div className="p-4 bg-white rounded-lg">
@@ -305,6 +317,20 @@ export default function AdminOrderDetail() {
         setOpenModalChangeTable={setOpenModalChangeTable}
         fetchOrder={fetchOrder}
         orderId={order._id}
+      />}
+
+      {openModalMergeTable && <ModalMergeTable
+        openModalMergeTable={openModalMergeTable}
+        setOpenModalMergeTable={setOpenModalMergeTable}
+        fetchOrder={fetchOrder}
+        orderId={order._id}
+      />}
+
+      {openModalSplitTable && <ModalSplitTable
+        openModalSplitTable={openModalSplitTable}
+        setOpenModalSplitTable={setOpenModalSplitTable}
+        fetchOrder={fetchOrder}
+        currOrder={order}
       />}
     </>
   )
@@ -437,8 +463,8 @@ function ModalAddProduct({
                 ))
                 :
                 (
-                  <div className="flex items-center justify-center h-96">
-                    <h1 className="text-2xl font-bold">Không có sản phẩm nào</h1>
+                  <div className="">
+                    <h1 className="">Không có sản phẩm nào</h1>
                   </div>
                 )
               }
@@ -517,6 +543,223 @@ function ModalChangeTable({
       <Modal.Footer>
         <Button color={"blue"} onClick={onChangeTable}>Chuyển</Button>
         <Button color={"gray"} onClick={() => setOpenModalChangeTable(false)}>Đóng</Button>
+      </Modal.Footer>
+    </Modal>
+  )
+}
+
+function ModalMergeTable({
+  openModalMergeTable = false,
+  setOpenModalMergeTable = () => { },
+  fetchOrder = () => { },
+  orderId = null,
+}) {
+  const [tables, setTables] = useState([]);
+  const [selectedTable, setSelectedTable] = useState("");
+  const products = tables.find((table) => table._id === selectedTable)?.order?.products || [];
+
+  useEffect(() => {
+    const fetchTables = async () => {
+      try {
+        const res = await axios.get('/tables', {
+          params: {
+            limit: 100,
+            page: 1,
+            filters: "active:true"
+          }
+        })
+        setTables(res?.data?.docs?.filter((table) => table?.order && table?.order?._id !== orderId));
+      } catch (error) {
+        pushToast(error?.response?.data?.message || error?.message, "error");
+      }
+    }
+    fetchTables();
+  }, []);
+
+  const onMergeTable = async () => {
+    if (!selectedTable) {
+      pushToast("Chọn bàn ghép vào trước!", "error");
+      return;
+    }
+    try {
+      const res = await axios.patch(`/orders/${orderId}/merge`, {
+        from: selectedTable
+      });
+      pushToast("Ghép bàn thành công", "success");
+      await fetchOrder();
+      setOpenModalMergeTable(false);
+    } catch (error) {
+      pushToast(error?.response?.data?.message || error?.message, "error");
+    }
+  }
+
+  return (
+    <Modal show={openModalMergeTable} onClose={() => setOpenModalMergeTable(false)}>
+      <Modal.Header>
+        <h1 className="text-2xl font-bold">Ghép bàn</h1>
+      </Modal.Header>
+      <Modal.Body>
+        <div className="flex flex-col gap-2">
+          <h1 className="text-lg text-gray-800">Chọn bàn muốn ghép:</h1>
+          <p className="text-sm text-gray-500">(Bàn được chọn sẽ được ghép vào bàn hiện tại!)</p>
+          <Select
+            value={selectedTable}
+            onChange={(e) => setSelectedTable(e.target.value)}
+          >
+            <option value={""}>Chọn bàn</option>
+            {tables.map((table) => (
+              <option key={table._id} value={table._id}>{table.floor.slug}-{table.name} ({table.capacity} chỗ)</option>
+            ))}
+          </Select>
+          <div>
+            <h1 className="text-lg text-gray-800">Danh sách món của bàn được chọn:</h1>
+            <div className="flex flex-col gap-2">
+              {products.length > 0 ? products?.map((item, index) => (
+                  <div className="bg-blue-100 p-4 rounded-lg flex gap-4 text-black items-center" key={index}>
+                    <img src={item.product.image} className={"size-32 object-cover rounded-lg shadow-lg"}/>
+                    <div
+                      className="flex flex-col gap-1 justify-around"
+                    >
+                      <h1 className="text-lg font-bold">{item.product.name}</h1>
+                      <h1 className="font-bold">Giá: {formatVND(item.price)}</h1>
+                      <h1>Số lượng: {item.quantity}</h1>
+                      <div className="flex gap-2 items-center">
+                        <h1>Loại: {item.option || "Mặc định"}</h1>
+                      </div>
+                    </div>
+                  </div>
+                ))
+                :
+                (
+                  <div className="text-black">
+                    <h1>Không có sản phẩm nào</h1>
+                  </div>
+                )
+              }
+            </div>
+          </div>
+        </div>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button color={"blue"} onClick={onMergeTable}>Ghép</Button>
+        <Button color={"gray"} onClick={() => setOpenModalMergeTable(false)}>Đóng</Button>
+      </Modal.Footer>
+    </Modal>
+  )
+}
+
+function ModalSplitTable({
+  openModalSplitTable = false,
+  setOpenModalSplitTable = () => { },
+  fetchOrder = () => { },
+  currOrder = null,
+}) {
+  const [tables, setTables] = useState([]);
+  const [selectedTable, setSelectedTable] = useState("");
+  const [selectedProducts, setSelectedProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchTables = async () => {
+      try {
+        const res = await axios.get('/tables', {
+          params: {
+            limit: 100,
+            page: 1,
+            filters: "active:true"
+          }
+        })
+        setTables(res?.data?.docs?.filter((table) => !table?.order));
+      } catch (error) {
+        pushToast(error?.response?.data?.message || error?.message, "error");
+      }
+    }
+    fetchTables();
+  }, []);
+
+  const onSplitTable = async () => {
+    if (!selectedTable) {
+      pushToast("Chọn bàn muốn tách đến!", "error");
+      return;
+    }
+    if (selectedProducts.length === 0) {
+      pushToast("Chọn món muốn tách!", "error");
+      return;
+    }
+
+    try {
+      const res = await axios.patch(`/orders/${currOrder._id}/split`, {
+        to: selectedTable,
+        products: selectedProducts
+      });
+      pushToast("Tách bàn thành công", "success");
+      await fetchOrder();
+      setOpenModalSplitTable(false);
+    } catch (error) {
+      pushToast(error?.response?.data?.message || error?.message, "error");
+    }
+  }
+
+  return (
+    <Modal show={openModalSplitTable} onClose={() => setOpenModalSplitTable(false)}>
+      <Modal.Header>
+        <h1 className="text-2xl font-bold">Tách bàn</h1>
+      </Modal.Header>
+      <Modal.Body>
+        <div className="flex flex-col gap-2">
+          <h1 className="text-lg text-gray-800">Chọn bàn muốn tách:</h1>
+          <p className="text-sm text-gray-500">(Các món được chọn sẽ được tách đến bàn này!)</p>
+          <Select
+            value={selectedTable}
+            onChange={(e) => setSelectedTable(e.target.value)}
+          >
+            <option value={""}>Chọn bàn</option>
+            {tables.map((table) => (
+              <option key={table._id} value={table._id}>{table.floor.slug}-{table.name} ({table.capacity} chỗ)</option>
+            ))}
+          </Select>
+
+          <div>
+            <h1 className="text-lg text-gray-800">Chọn món muốn chuyển:</h1>
+            <ul className="w-full flex flex-col gap-2 mt-2">
+              {currOrder?.products?.map((product, index) => (
+                <li key={product._id}>
+                  <input
+                    type="checkbox"
+                    id={product._id}
+                    value={product._id}
+                    className="hidden peer"
+                    required=""
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedProducts([...selectedProducts, e.target.value]);
+                      } else {
+                        setSelectedProducts(selectedProducts.filter((item) => item !== e.target.value));
+                      }
+                    }}
+                  />
+                  <label htmlFor={product._id}
+                         className="inline-flex items-center justify-between w-full p-5 text-gray-800 border-2 border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 peer-checked:border-blue-600 dark:peer-checked:text-gray-300 peer-checked:text-gray-950 hover:bg-blue-200 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 bg-blue-100 gap-4">
+                    <div className="flex gap-4">
+                      <img src={product.product.image} className={"size-32 object-cover rounded-lg shadow-lg"}/>
+                      <div className="flex flex-col gap-1 justify-around">
+                        <h1 className="text-lg font-bold">{product.product.name}</h1>
+                        <h1 className="font-bold">Giá: {formatVND(product.price)}</h1>
+                        <h1>Số lượng: {product.quantity}</h1>
+                        <div className="flex gap-2 items-center">
+                          <h1>Loại: {product.option || "Mặc định"}</h1>
+                        </div>
+                      </div>
+                    </div>
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button color={"blue"} onClick={onSplitTable}>Tách</Button>
+        <Button color={"gray"} onClick={() => setOpenModalSplitTable(false)}>Đóng</Button>
       </Modal.Footer>
     </Modal>
   )

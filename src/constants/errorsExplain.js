@@ -13,6 +13,7 @@ const errorsExplain = {
   'user_existed': "Người dùng đã tồn tại!",
   'data_missing': "Dữ liệu không đủ!",
   'data_required': "Dữ liệu bắt buộc!",
+  'table_has_order_pending': "Bàn đang có order chưa hoàn thành!",
 }
 
 export default errorsExplain;

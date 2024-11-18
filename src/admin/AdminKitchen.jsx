@@ -48,6 +48,18 @@ export default function AdminKitchen() {
     }
   };
 
+  const onCompleteOrder = async (orderId) => {
+    try {
+      const res = await axios.patch(`/orders/${orderId}`, {
+        status: "completed"
+      });
+      pushToast("Hoàn thành order thành công", "success");
+      fetchOrders();
+    } catch (error) {
+      pushToast(error?.response?.data?.message || error?.message, "error");
+    }
+  }
+
   if (!orders) return null;
 
   return (
@@ -60,7 +72,7 @@ export default function AdminKitchen() {
                 <span className={"font-bold"}>Bàn: </span>
                 <span>{order?.table?.floor?.slug}-{order?.table?.name}</span>
               </div>
-              <Button size={"xs"} color={"info"}>Trả hết</Button>
+              <Button size={"xs"} color={"info"} onClick={() => onCompleteOrder(order._id)}>Trả hết</Button>
             </div>
             <div>
               {order.products.map(product => (

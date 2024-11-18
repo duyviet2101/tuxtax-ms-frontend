@@ -8,7 +8,7 @@ import * as Yup from "yup";
 import {Button, FileInput, Label, Radio, Select, Spinner, Textarea, TextInput} from "flowbite-react";
 import {MdDelete, MdOutlinePublishedWithChanges} from "react-icons/md";
 import {FaEye, FaEyeSlash} from "react-icons/fa";
-import {parseFilters, stringifyFilters} from "../helpers/parsers.js";
+import {formatVND, parseFilters, stringifyFilters} from "../helpers/parsers.js";
 import moment from "moment";
 import {IoAddCircle} from "react-icons/io5";
 import {FaCircleMinus} from "react-icons/fa6";
@@ -808,6 +808,7 @@ export default function ProductsManager() {
         category: product?.category?.name,
         createdAt: moment(product.createdAt).format("HH:mm, DD/MM/YYYY"),
         updatedAt: moment(product.updatedAt).format("HH:mm, DD/MM/YYYY"),
+        price: formatVND(product.price),
       })));
 
       setPagination({
@@ -817,7 +818,7 @@ export default function ProductsManager() {
       })
 
     } catch (error) {
-      pushToast(error.message, "error");
+      pushToast(error?.response?.data?.message || error?.message, "error");
     }
   };
 
@@ -848,7 +849,7 @@ export default function ProductsManager() {
   }, []);
 
   return (
-    <div className="flex items-start justify-center h-full w-full">
+    <div className="flex items-start justify-center h-full w-full p-8">
       <ListView
         data={products}
         currentPage={pagination.currentPage}

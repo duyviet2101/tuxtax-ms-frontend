@@ -49,7 +49,7 @@ export default function ListView({
 
   return (
     <>
-      <div className="relative grid grid-rows-12 h-full w-full overflow-hidden p-8">
+      <div className="relative grid grid-rows-12 h-full w-full overflow-hidden">
         {isSearchable && (
           <div className="w-full mb-2 row-end-1">
             <form id={"search-data-form"} className="relative" onSubmit={(e) => {
@@ -86,17 +86,11 @@ export default function ListView({
         </div>}
         <div className="flex justify-between items-center px-2">
           <div className="w-16 flex justify-start py-2">
-            <Button color="gray" className="w-full" onClick={() => {
+            {CreatorModal && <Button color="gray" className="w-full" onClick={() => {
               setOpenCreateModal(true);
             }}>
               <HiMiniPlusCircle className="w-5 h-5"/>
-            </Button>
-            {/*<ButtonGroup>*/}
-            {/*  <Button color="gray" className="w-full" onClick={() => {*/}
-            {/*  }}>*/}
-            {/*    <HiCheck className="w-5 h-5" />*/}
-            {/*  </Button>*/}
-            {/*</ButtonGroup>*/}
+            </Button>}
           </div>
 
           <div className="w-96 flex flex-col py-2 justify-center align-middle">
@@ -165,8 +159,10 @@ export default function ListView({
                   <Table.Row key={index} onClick={() => {
                     onItemSelect && onItemSelect(item);
                     setSelectedItem(item);
-                    setOpenItemModal(true);
-                  }}>
+                    setOpenItemModal(!!ItemModal);
+                  }}
+                             className="hover:bg-blue-100 cursor-pointer"
+                  >
                     {
                       presentationFields
                         ? presentationFields.map((field, index) => (

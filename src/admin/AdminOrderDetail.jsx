@@ -225,14 +225,26 @@ export default function AdminOrderDetail() {
     }
   }
 
+  const onUpdateStatusOrder = async (status) => {
+    try {
+      const res = await axios.patch(`/orders/${id}`, {
+        status
+      });
+      pushToast("Cập nhật trạng thái thành công", "success");
+      await fetchOrder();
+    } catch (error) {
+      pushToast(error?.response?.data?.message || error?.message, "error");
+    }
+  }
+
   useEffect(() => {
     fetchOrder();
   }, []);
 
   if (!order) return (<div>Loading...</div>)
   return (
-    <>
-      <div className="p-4 bg-blue-400 grid grid-cols-3 sticky">
+    <div className="min-h-full bg-blue-100">
+      <div className="p-4 bg-blue-400 grid grid-cols-3 sticky top-0 z-40">
         <Button className="w-fit"
                 onClick={() => navigate(-1)}
         >
@@ -243,8 +255,8 @@ export default function AdminOrderDetail() {
           Bàn {order?.table?.floor?.slug}-{order?.table?.name}
         </h1>
       </div>
-      <div className="flex items-start justify-center h-full w-full">
-        <div className="relative w-full p-4 bg-blue-100 flex flex-col gap-4 overflow-auto">
+      <div className="flex items-start justify-center w-full bg-blue-100">
+        <div className="relative w-full p-4 flex flex-col gap-4 overflow-auto">
           <div className="p-4 bg-white rounded-lg">
             <div>
               <h1 className="text-xl font-bold mb-2">
@@ -270,29 +282,49 @@ export default function AdminOrderDetail() {
               </h1>
             </div>
             <div className={"flex gap-2"}>
-              <Button className={"w-full text-lg font-bold"} size={"lg"} gradientDuoTone={"cyanToBlue"}>Thanh toán</Button>
-              <Button className={"w-full text-lg font-bold"} size={"lg"} gradientDuoTone={"greenToBlue"} onClick={() => setOpenModalAddProduct(true)}>Thêm món</Button>
+              <Button className={"w-full text-lg font-bold"}
+                      size={"lg"}
+                      gradientDuoTone={"cyanToBlue"}
+                      onClick={() => navigate(`/admin/orders/${order._id}/checkout`)}
+                      disabled={order?.isPaid === true}
+              >{order?.isPaid ? "Đã thanh toán" : "Thanh toán"}</Button>
+              <Button className={"w-full text-lg font-bold"}
+                      size={"lg"}
+                      gradientDuoTone={"greenToBlue"}
+                      onClick={() => setOpenModalAddProduct(true)}
+                      disabled={order?.isPaid === true}
+              >Thêm món</Button>
               <Button className={"w-full text-lg font-bold"}
                       size={"lg"}
                       gradientDuoTone={"purpleToBlue"}
                       onClick={() => setOpenModalChangeTable(true)}
+                      disabled={order?.isPaid === true}
               >Chuyển bàn</Button>
               <Button className={"w-full text-lg font-bold"}
                       size={"lg"}
                       gradientDuoTone={"purpleToPink"}
                       onClick={() => setOpenModalMergeTable(true)}
+                      disabled={order?.isPaid === true}
               >Ghép bàn</Button>
               <Button className={"w-full text-lg font-bold"}
                       size={"lg"}
                       gradientDuoTone={"pinkToOrange"}
                       onClick={() => setOpenModalSplitTable(true)}
+                      disabled={order?.isPaid === true}
               >Tách bàn</Button>
             </div>
           </div>
           <div className="p-4 bg-white rounded-lg">
-            <h1 className="text-xl font-bold mb-2">
-              Danh sách món
-            </h1>
+            <div className="flex justify-between items-center mb-2">
+              <h1 className="text-xl font-bold mb-2">
+                Danh sách món
+              </h1>
+              <Button
+                gradientDuoTone={"greenToBlue"}
+                disabled={order?.status === "completed"}
+                onClick={() => onUpdateStatusOrder("completed")}
+              >{order?.status === "completed" ? "Đã trả hết" : "Trả hết"}</Button>
+            </div>
             <div className="flex flex-col gap-2">
               {
                 order?.products?.map((product) => (
@@ -332,7 +364,7 @@ export default function AdminOrderDetail() {
         fetchOrder={fetchOrder}
         currOrder={order}
       />}
-    </>
+    </div>
   )
 }
 

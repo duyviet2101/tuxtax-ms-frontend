@@ -305,7 +305,7 @@ export default function FloorManagement() {
   }, [pagination.currentPage, searchParams]);
 
   return (
-    <div className="flex items-start justify-center h-full w-full">
+    <div className="flex items-start justify-center h-full w-full p-8">
       <ListView
         data={floors}
         currentPage={pagination.currentPage}

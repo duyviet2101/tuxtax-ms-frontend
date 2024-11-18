@@ -471,7 +471,7 @@ export default function TablesManager() {
   }, []);
 
   return (
-    <div className="flex items-start justify-center h-full w-full">
+    <div className="flex items-start justify-center h-full w-full p-8">
       <ListView
         data={tables}
         currentPage={pagination.currentPage}

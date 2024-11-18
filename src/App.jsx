@@ -19,6 +19,7 @@ import FloorManagement from "./admin/Floor.jsx";
 import AdminOrderDetail from "./admin/AdminOrderDetail.jsx";
 import AdminCheckout from "./admin/AdminCheckout.jsx";
 import AdminOrderHistory from "./admin/AdminOrderHistory.jsx";
+import AdminKitchen from "./admin/AdminKitchen.jsx";
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
               <Route path="orders/:id/checkout" element={<AdminCheckout/>}/>
               <Route path="floors" element={<FloorManagement/>} />
               <Route path="tables" element={<TablesManager />} />
+              <Route path="kitchen" element={<AdminKitchen/>} />
               <Route path="*" element={<div>404</div>} />
             </Route>
             <Route path="/" element={<ClientOrder />} />

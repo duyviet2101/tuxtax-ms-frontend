@@ -97,6 +97,20 @@ const Bill = forwardRef((props, ref) => {
                   Tiền mặt
                 </h1>
               </div>
+              <div className={"flex mt-4"}>
+                <img src={"/QR_Checkout.png"} alt={"QR CHECK OUT"} className={"h-40"}/>
+                <div className={"flex justify-center items-center flex-col w-full"}>
+                  <h1 className="text-center text-lg">
+                    Techcombank
+                  </h1>
+                  <h1 className="text-center text-lg">
+                    STK: 1015308512
+                  </h1>
+                  <h1 className="text-center text-lg">
+                    CTK: HOANG THI THUY
+                  </h1>
+                </div>
+              </div>
             </div>
           </div>
         </div>

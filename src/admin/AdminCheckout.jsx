@@ -49,7 +49,7 @@ export default function AdminCheckout() {
     documentTitle: `Bill-${order?.billCode}`,
     pageStyle: `
       @page {
-        size: 80mm 297mm;
+        size: 120mm 297mm;
         margin: 0;
       }
       @media print {

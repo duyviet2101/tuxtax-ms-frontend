@@ -16,16 +16,16 @@ const Bill = forwardRef((props, ref) => {
   return (
     <div className={"hidden"}>
       <div className="flex justify-center text-black" ref={ref}>
-        <div className="w-[500px] h-full p-8 box-border my-2">
+        <div className="w-[700px] h-full p-4 box-border my-2">
           <div className={"text-center"}>
             <h1 className="text-xl font-bold">
-              Tux-Tax Ẩm Thực Đường Phố Thailand
+              Tux-Tax Ẩm Thực Thailand
             </h1>
             <h1 className="">
-              176 Hàn Thuyên, Hai Bà Trưng, Hà Nội
+              17B Hàn Thuyên, Hai Bà Trưng, Hà Nội
             </h1>
             <h1 className="">
-              Hotline: 0839323993
+              Hotline: 0963607229
             </h1>
             <hr className={"border-t-2 text-black border-dashed border-t-black my-2"}/>
           </div>
@@ -39,14 +39,12 @@ const Bill = forwardRef((props, ref) => {
               </h1>
             </div>
             <div className={"flex flex-col gap-1"}>
-              <div className={"flex gap-8"}>
-                <h1 className="">
-                  <b>Khách hàng:</b> {order?.name || "Khách lẻ"}
-                </h1>
-                <h1 className="">
-                  <b>SĐT:</b> {order?.phone || "N/A"}
-                </h1>
-              </div>
+              <h1 className="">
+                <b>Khách hàng:</b> {order?.name || "Khách lẻ"}
+              </h1>
+              <h1 className="">
+                <b>SĐT:</b> {order?.phone || "N/A"}
+              </h1>
               <h1 className="">
                 <b>Bàn:</b> {order?.table?.floor?.slug}-{order?.table?.name}
               </h1>
@@ -114,7 +112,7 @@ const tableFields = [
   },
   {
     key: "quantity",
-    label: "Số lượng",
+    label: "SL",
   },
   {
     key: "price",

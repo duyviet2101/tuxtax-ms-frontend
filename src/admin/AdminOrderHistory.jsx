@@ -28,8 +28,8 @@ export default function AdminOrderHistory() {
           order: searchParams.get("order"),
           filters: "status:completed,isPaid:true" + (searchParams.get("filters") ? "," + searchParams.get("filters") : ""),
           search: searchParams.get("search"),
-          from: searchParams.get("from"),
-          to: searchParams.get("to")
+          from: moment(searchParams.get("from")).toISOString(),
+          to: moment(searchParams.get("to")).toISOString()
         }
       })
 
@@ -89,7 +89,6 @@ export default function AdminOrderHistory() {
     }
     fetchTables();
   }, []);
-
   return (
     <div className="flex items-start justify-center h-full w-full">
       <div className="relative h-full w-full p-8">
@@ -109,20 +108,22 @@ export default function AdminOrderHistory() {
           <div className={"flex gap-4 items-center"}>
             <Datepicker language={"vi"} labelTodayButton={"Hôm nay"} labelClearButton={"Xoá"}
                         onChange={(value) => {
-                          const from = moment(value).format("YYYY-MM-DD");
+                          const from = moment(value).toISOString();
                           searchParams.set("from", from);
                           setSearchParams(searchParams);
                         }}
-                        value={searchParams.get("from") || null}
+                        // value={new Date(searchParams.get("from") || new Date()) || null}
+                        value={searchParams.get("from") ? moment(searchParams.get("from")).toDate() : null}
             />
             đến
             <Datepicker language={"vi"} labelTodayButton={"Hôm nay"} labelClearButton={"Xoá"}
                         onChange={(value) => {
-                          const to = moment(value).format("YYYY-MM-DD");
+                          const to = moment(value).toISOString();
                           searchParams.set("to", to);
                           setSearchParams(searchParams);
                         }}
-                        value={searchParams.get("to") || null}
+                        // value={new Date(searchParams.get("to") || new Date()) || null}
+                        value={searchParams.get("to") ? moment(searchParams.get("to")).toDate() : null}
             />
             <Button
               onClick={() => {

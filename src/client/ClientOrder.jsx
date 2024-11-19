@@ -14,7 +14,7 @@ export default function ClientOrder() {
     try {
       const res = await axios.get("/dashboard/best-seller", {
         params: {
-          by: "day",
+          by: "year",
           limit: 5
         }
       });

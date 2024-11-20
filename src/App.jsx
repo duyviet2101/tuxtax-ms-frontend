@@ -22,6 +22,8 @@ import AdminOrderHistory from "./admin/AdminOrderHistory.jsx";
 import AdminKitchen from "./admin/AdminKitchen.jsx";
 import ClientLayout from "./client/ClientLayout.jsx";
 import ClientProducts from "./client/ClientProducts.jsx";
+import OrderSuccess from "./client/OrderSuccess.jsx";
+import ClientCheckout from "./client/ClientCheckout.jsx";
 
 function App() {
   return (
@@ -59,10 +61,12 @@ function App() {
               <Route path="kitchen" element={<AdminKitchen/>} />
               <Route path="*" element={<div>404</div>} />
             </Route>
+            <Route path="/success" element={<OrderSuccess />} />
             <Route
               path="/"
               element={<ClientLayout />}
             >
+              <Route path="/:id/checkout" element={<ClientCheckout />} />
               <Route path="/:id/products" element={<ClientProducts />} />
               <Route path="/:id" element={<ClientOrder />} />
               <Route path="*" element={<div>404</div>} />

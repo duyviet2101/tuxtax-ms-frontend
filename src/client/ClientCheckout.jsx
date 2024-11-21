@@ -6,8 +6,10 @@ import {Button, Select} from "flowbite-react";
 import pushToast from "../helpers/sonnerToast.js";
 import useLocalStorageState from "use-local-storage-state";
 import {axios} from "../services/requests.js";
+import {useParams} from "react-router-dom";
 
 export default function ClientCheckout() {
+  const {id} = useParams();
   const [orderId, setOrderId] = useLocalStorageState("orderId", {
     defaultValue: null,
   });
@@ -36,7 +38,8 @@ export default function ClientCheckout() {
     } else {
       try {
         const res = await axios.post(`/checkout/create-payment-url`, {
-          orderId: orderId
+          orderId: orderId,
+          returnUrl: `${window.location.origin}/${id}/payment-success`,
         });
         window.location.href = res.data;
       } catch (error) {

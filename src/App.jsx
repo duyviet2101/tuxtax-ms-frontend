@@ -26,6 +26,7 @@ import OrderSuccess from "./client/OrderSuccess.jsx";
 import ClientCheckout from "./client/ClientCheckout.jsx";
 import ClientHome from "./client/ClientHome.jsx";
 import PaymentSuccess from "./admin/PaymentSuccess.jsx";
+import ClientPaymentSuccess from "./client/ClientPaymentSuccess.jsx";
 
 function App() {
   return (
@@ -41,7 +42,6 @@ function App() {
           <Routes>
             <Route path={"/auth/login"} element={<Login/>} />
             <Route path="/admin" element={<AdminHome />} />
-            <Route path="payment-success" element={<PaymentSuccess />} />
             <Route
               path="/admin"
               element={
@@ -50,6 +50,7 @@ function App() {
                 </ProtectedRoute>
               }
             >
+              <Route path="payment-success" element={<PaymentSuccess />} />
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="notifications" element={<AdminNotification />} />
               <Route path="users" element={<AdminUserManager />} />
@@ -70,6 +71,7 @@ function App() {
               path="/"
               element={<ClientLayout />}
             >
+              <Route path="/:id/payment-success" element={<ClientPaymentSuccess />} />
               <Route path="/:id/checkout" element={<ClientCheckout />} />
               <Route path="/:id/products" element={<ClientProducts />} />
               <Route path="/:id" element={<ClientOrder />} />

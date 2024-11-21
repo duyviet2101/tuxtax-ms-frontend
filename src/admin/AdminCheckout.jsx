@@ -10,7 +10,7 @@ import Bill from "../comps/Bill.jsx";
 import {useReactToPrint} from "react-to-print";
 import {FaCircleMinus} from "react-icons/fa6";
 import {IoAddCircle} from "react-icons/io5";
-import {FaCheck, FaQuestion} from "react-icons/fa";
+import {FaCheck} from "react-icons/fa";
 
 export default function AdminCheckout() {
   const {id} = useParams();
@@ -60,7 +60,8 @@ export default function AdminCheckout() {
     } else {
       try {
         const res = await axios.post(`/checkout/create-payment-url`, {
-          orderId: id
+          orderId: id,
+          returnUrl: `${window.location.origin}/admin/payment-success`
         });
         window.location.href = res.data;
       } catch (error) {

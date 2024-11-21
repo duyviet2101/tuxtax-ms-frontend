@@ -25,6 +25,7 @@ import ClientProducts from "./client/ClientProducts.jsx";
 import OrderSuccess from "./client/OrderSuccess.jsx";
 import ClientCheckout from "./client/ClientCheckout.jsx";
 import ClientHome from "./client/ClientHome.jsx";
+import PaymentSuccess from "./admin/PaymentSuccess.jsx";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
           <Routes>
             <Route path={"/auth/login"} element={<Login/>} />
             <Route path="/admin" element={<AdminHome />} />
+            <Route path="payment-success" element={<PaymentSuccess />} />
             <Route
               path="/admin"
               element={

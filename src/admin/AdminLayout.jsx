@@ -10,7 +10,7 @@ import {FaKitchenSet} from "react-icons/fa6";
 
 export default function AdminLayout() {
   return (
-    <div className="flex h-screen w-screen bg-gray-50">
+    <div className="flex h-screen w-screen bg-blue-200">
       <Sidebar className="fixed w-64 bg-gray-200 shadow-lg z-40">
         <Sidebar.Items>
           <Sidebar.ItemGroup>

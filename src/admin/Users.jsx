@@ -484,8 +484,8 @@ export default function AdminUserManager() {
           page: pagination.currentPage,
           limit: 10,
           filters: searchParams.get("filters"),
-          sortBy: searchParams.get("sortBy"),
-          order: searchParams.get("order"),
+          sortBy: searchParams.get("sortBy") || "createdAt",
+          order: searchParams.get("order") || "desc",
         }
       });
       setUsers(res.data.docs.map(user => ({

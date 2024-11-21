@@ -14,7 +14,7 @@ const Bill = forwardRef((props, ref) => {
   }));
 
   return (
-    <div className={"hidden"}>
+    <div className={""}>
       <div className="flex justify-center text-black" ref={ref}>
         <div className="w-[700px] h-full p-4 box-border my-2">
           <div className={"text-center"}>
@@ -94,23 +94,23 @@ const Bill = forwardRef((props, ref) => {
                   Hình thức:
                 </h1>
                 <h1 className="mr-2">
-                  Tiền mặt
+                  {order?.checkoutMethod === "banking" ? "Chuyển khoản" : "Tiền mặt"}
                 </h1>
               </div>
-              <div className={"flex mt-4"}>
-                <img src={"/QR_Checkout.png"} alt={"QR CHECK OUT"} className={"h-40"}/>
-                <div className={"flex justify-center items-center flex-col w-full"}>
-                  <h1 className="text-center text-lg">
-                    Techcombank
-                  </h1>
-                  <h1 className="text-center text-lg">
-                    STK: 1015308512
-                  </h1>
-                  <h1 className="text-center text-lg">
-                    CTK: HOANG THI THUY
-                  </h1>
-                </div>
-              </div>
+              {/*<div className={"flex mt-4"}>*/}
+              {/*  <img src={"/QR_Checkout.png"} alt={"QR CHECK OUT"} className={"h-40"}/>*/}
+              {/*  <div className={"flex justify-center items-center flex-col w-full"}>*/}
+              {/*    <h1 className="text-center text-lg">*/}
+              {/*      Techcombank*/}
+              {/*    </h1>*/}
+              {/*    <h1 className="text-center text-lg">*/}
+              {/*      STK: 1015308512*/}
+              {/*    </h1>*/}
+              {/*    <h1 className="text-center text-lg">*/}
+              {/*      CTK: HOANG THI THUY*/}
+              {/*    </h1>*/}
+              {/*  </div>*/}
+              {/*</div>*/}
             </div>
           </div>
         </div>

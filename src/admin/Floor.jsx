@@ -266,8 +266,8 @@ export default function FloorManagement() {
         params: {
           page: pagination.currentPage,
           limit: 10,
-          sortBy: searchParams.get("sortBy"),
-          order: searchParams.get("order"),
+          sortBy: searchParams.get("sortBy") || "createdAt",
+          order: searchParams.get("order") || "desc",
           filters: searchParams.get("filters"),
         }
       });

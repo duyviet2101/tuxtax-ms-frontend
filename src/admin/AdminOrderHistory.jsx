@@ -18,14 +18,29 @@ export default function AdminOrderHistory() {
     totalPages: 1
   });
 
+  const onReversePay = async (id) => {
+    const confirm = window.confirm("Xác nhận hoàn tác thanh toán?");
+    if (!confirm) return;
+
+    try {
+      await axios.patch(`/orders/${id}/is-paid`, {
+        isPaid: false
+      });
+      pushToast("Hoàn tác thanh toán thành công", "success");
+      fetchOrders();
+    } catch (error) {
+      pushToast(error?.response?.data?.message || error?.message, "error");
+    }
+  }
+
   const fetchOrders = async () => {
     try {
       const res = await axios.get('/orders', {
         params: {
           page: pagination.currentPage,
           limit: 10,
-          sortBy: searchParams.get("sortBy"),
-          order: searchParams.get("order"),
+          sortBy: searchParams.get("sortBy") || "paidAt",
+          order: searchParams.get("order") || "desc",
           filters: "status:completed,isPaid:true" + (searchParams.get("filters") ? "," + searchParams.get("filters") : ""),
           search: searchParams.get("search"),
           from: moment(searchParams.get("from")).toISOString(),
@@ -42,6 +57,11 @@ export default function AdminOrderHistory() {
         total: formatVND(item?.total),
         createdAt: moment(item?.createdAt).format("HH:mm, DD/MM/YYYY"),
         paidAt: item?.paidAt ? moment(item?.paidAt).format("HH:mm, DD/MM/YYYY") : "N/A",
+        checkoutMethod: item?.checkoutMethod === "banking" ? "Chuyển khoản" : "Tiền mặt",
+        actions: <div className={"flex justify-center items-center gap-2"}>
+          <Button size={"xs"} color={"warning"} onClick={() => onReversePay(item?._id)}>Hoàn tác</Button>
+          <Button size={"xs"} color={"success"} onClick={() => navigate(`/admin/orders/${item._id}/checkout`)}>Xem</Button>
+        </div>
       })));
 
       setPagination({
@@ -172,7 +192,7 @@ export default function AdminOrderHistory() {
           onFilterApply={() => setSearchParams(searchParams)}
           renderCreator={null}
           onItemSelect={(item) => {
-            navigate(`/admin/orders/${item._id}/checkout`);
+            // navigate(`/admin/orders/${item._id}/checkout`);
           }}
           ItemModal={null}
           CreatorModal={null}
@@ -216,4 +236,12 @@ const presentationFields = [
     key: "paidAt",
     label: "Thanh toán vào",
   },
+  {
+    key: "checkoutMethod",
+    label: "Phương thức",
+  },
+  {
+    key: "actions",
+    label: "Hành động",
+  }
 ]

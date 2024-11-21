@@ -286,8 +286,8 @@ export default function AdminOrderDetail() {
                       size={"lg"}
                       gradientDuoTone={"cyanToBlue"}
                       onClick={() => navigate(`/admin/orders/${order._id}/checkout`)}
-                      disabled={order?.isPaid === true}
-              >{order?.isPaid ? "Đã thanh toán" : "Thanh toán"}</Button>
+                      // disabled={order?.isPaid === true}
+              >{order?.isPaid ? "Xem hoá đơn" : "Thanh toán"}</Button>
               <Button className={"w-full text-lg font-bold"}
                       size={"lg"}
                       gradientDuoTone={"greenToBlue"}

@@ -104,9 +104,24 @@ export default function AdminOrders() {
             {tables.map((table) => (
               <div key={table._id}
                    className={`bg-${table?.order ? "blue" : "gray"}-100 rounded-2xl p-4 flex flex-col items-center justify-center cursor-pointer`}
-                   onClick={() => {
+                   onClick={async () => {
                      if (table?.order) {
                        navigate(`/admin/orders/${table.order._id}`);
+                     } else {
+                       const isConfirm = window.confirm("Bạn có muốn tạo order cho bàn này không?");
+                        if (isConfirm) {
+                          try {
+                            const res = await axios.post('/orders', {
+                              table: table._id,
+                              name: "Khách lẻ",
+                              phone: "N/A",
+                              products: [],
+                            });
+                            navigate(`/admin/orders/${res?.data?._id}`);
+                          } catch (error) {
+                            pushToast(error?.response?.data?.message || error?.message, "error");
+                          }
+                        }
                      }
                    }}
               >

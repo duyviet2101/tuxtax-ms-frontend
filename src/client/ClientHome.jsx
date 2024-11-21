@@ -4,8 +4,8 @@ import {Link} from "react-router-dom";
 export default function ClientHome() {
   return (
     <div className="w-screen h-screen max-h-svh bg-gray-200 overflow-auto text-gray-800">
-      <div className={"h-full max-h-dvh"}>
-        <div className={"h-full basis-1/3 flex items-center"}>
+      <div className={"h-full max-h-dvh flex justify-center items-center"}>
+        <div className={"h-full basis-1/3 flex items-center justify-center"}>
           <div className={"border pt-16 p-8 rounded-lg relative flex flex-col gap-2 shadow-xl bg-white"}>
             <div className={"h-32 w-32 absolute top-0 -translate-x-1/2 -translate-y-1/2 left-1/2"}>
               <img src={"/Logo-tuxtax.png"}

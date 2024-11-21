@@ -1,11 +1,33 @@
 import {HiShoppingCart} from "react-icons/hi";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {MdOutlineShoppingCartCheckout} from "react-icons/md";
 import {formatVND} from "../helpers/parsers.js";
 import {Button, Select} from "flowbite-react";
 import pushToast from "../helpers/sonnerToast.js";
+import useLocalStorageState from "use-local-storage-state";
+import {axios} from "../services/requests.js";
 
 export default function ClientCheckout() {
+  const [orderId, setOrderId] = useLocalStorageState("orderId", {
+    defaultValue: null,
+  });
+  const [order, setOrder] = useState(null);
+
+  const fetchOrder = async () => {
+    try {
+      const res = await axios.get(`/orders/${orderId}`);
+      setOrder(res.data)
+    } catch (error) {
+      pushToast(error?.response?.data?.message || error?.message, "error");
+    }
+  }
+
+  useEffect(() => {
+    fetchOrder();
+  }, []);
+
+  if (!order) return null;
+
   return (
     <>
       <div className={"text-gray-800"}>
@@ -15,8 +37,8 @@ export default function ClientCheckout() {
         </div>
         <div className={"p-4 m-4 bg-white rounded-lg"}>
           <div className={"grid grid-cols-1 gap-2"}>
-            {cart.map((item, index) => (
-              <>
+            {order.products.map((item, index) => (
+              <div>
                 <div className={"flex justify-between items-center p-2"} key={index}>
                   <div>
                     <h1 className={"text-lg font-bold"}>{item.product.name}</h1>
@@ -28,15 +50,15 @@ export default function ClientCheckout() {
                   </div>
                 </div>
                 <hr className={"my-2 border-0 border-dashed border-b-2 border-b-gray-400"}/>
-              </>
+              </div>
             ))}
           </div>
         </div>
         <div className={"p-4 m-4 bg-white rounded-lg"}>
           <div className={"flex justify-between items-center"}>
-            <h1 className={"text-2xl font-bold"}>{cart.length} Món</h1>
+            <h1 className={"text-2xl font-bold"}>{order.products.length} Món</h1>
             <h1
-              className={"text-2xl font-bold"}>{formatVND(cart.reduce((acc, item) => acc + item.price * item.quantity, 0))}</h1>
+              className={"text-2xl font-bold"}>{formatVND(order.products.reduce((acc, item) => acc + item.price * item.quantity, 0))}</h1>
           </div>
           <hr className={"my-2 border-0 border-dashed border-b-2 border-b-gray-400"}/>
           <div className={"flex justify-between items-center"}>
@@ -74,108 +96,3 @@ export default function ClientCheckout() {
     </>
   );
 }
-
-const cart = [
-  {
-    product: {
-      _id: "1",
-      name: "Cơm gà",
-    },
-    price: 50000,
-    option: "Không ớt",
-    note: "Ít dầu giúp em với ạ",
-    quantity: 2,
-  },
-  {
-    product: {
-      _id: "1",
-      name: "bún bò",
-    },
-    price: 30000,
-    option: "Không cay",
-    note: "Ít dầu giúp em với ạ",
-    quantity: 10,
-  },
-  {
-    product: {
-      _id: "1",
-      name: "bún riêu",
-    },
-    price: 30000,
-    option: "Không cay",
-    note: "Ít dầu giúp em với ạ",
-    quantity: 10,
-  },
-  {
-    product: {
-      _id: "1",
-      name: "Mooping kèm xôi" +
-        "",
-    },
-    price: 500000,
-    option: "Không ớt",
-    note: "Ít dầu giúp em với ạ",
-    quantity: 12,
-  },
-  {
-    product: {
-      _id: "1",
-      name: "bún bò",
-    },
-    price: 30000,
-    option: "Cay",
-    note: "Ít dầu giúp em với ạ",
-    quantity: 10,
-  },
-  {
-    product: {
-      _id: "1",
-      name: "Cơm gà",
-    },
-    price: 50000,
-    option: "Không ớt",
-    note: "Ít dầu giúp em với ạ",
-    quantity: 2,
-  },
-  {
-    product: {
-      _id: "1",
-      name: "bún bò",
-    },
-    price: 30000,
-    option: "Không cay",
-    note: "Ít dầu giúp em với ạ",
-    quantity: 10,
-  },
-  {
-    product: {
-      _id: "1",
-      name: "bún riêu",
-    },
-    price: 30000,
-    option: "Không cay",
-    note: "Ít dầu giúp em với ạ",
-    quantity: 10,
-  },
-  {
-    product: {
-      _id: "1",
-      name: "Mooping kèm xôi" +
-        "",
-    },
-    price: 500000,
-    option: "Không ớt",
-    note: "Ít dầu giúp em với ạ",
-    quantity: 12,
-  },
-  {
-    product: {
-      _id: "1",
-      name: "bún bò",
-    },
-    price: 30000,
-    option: "Cay",
-    note: "Ít dầu giúp em với ạ",
-    quantity: 10,
-  },
-]

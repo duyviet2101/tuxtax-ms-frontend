@@ -166,7 +166,7 @@ function ProductOrderCard({
             >Cập nhật số lượng</Button>
             <Button gradientDuoTone={"greenToBlue"}
                     onClick={() => setOpenModalEditPrice(true)}
-            >Sửa giá</Button>
+            >Chiết khấu</Button>
             <Button gradientDuoTone={"purpleToBlue"}
                     onClick={() => onUpdateStatusProductInOrder("cooking")}
                     disabled={product.status === "completed" || product.status === "cooking"}
@@ -180,7 +180,7 @@ function ProductOrderCard({
       </div>
       <Modal show={openModalEditPrice} onClose={() => setOpenModalEditPrice(false)}>
         <Modal.Header>
-          <h1 className="text-2xl font-bold">Sửa giá: {product.product.name}</h1>
+          <h1 className="text-2xl font-bold">Chiết khấu: {product.product.name}</h1>
         </Modal.Header>
         <Modal.Body>
           <div className="flex flex-col gap-2">
@@ -311,7 +311,7 @@ export default function AdminOrderDetail() {
                       gradientDuoTone={"pinkToOrange"}
                       onClick={() => setOpenModalSplitTable(true)}
                       disabled={order?.isPaid === true}
-              >Tách bàn</Button>
+              >Tách hoá đơn</Button>
             </div>
           </div>
           <div className="p-4 bg-white rounded-lg">
@@ -723,7 +723,7 @@ function ModalSplitTable({
         to: selectedTable,
         products: selectedProducts
       });
-      pushToast("Tách bàn thành công", "success");
+      pushToast("Tách hoá đơn thành công", "success");
       await fetchOrder();
       setOpenModalSplitTable(false);
     } catch (error) {
@@ -734,7 +734,7 @@ function ModalSplitTable({
   return (
     <Modal show={openModalSplitTable} onClose={() => setOpenModalSplitTable(false)}>
       <Modal.Header>
-        <h1 className="text-2xl font-bold">Tách bàn</h1>
+        <h1 className="text-2xl font-bold">Tách hoá đơn</h1>
       </Modal.Header>
       <Modal.Body>
         <div className="flex flex-col gap-2">

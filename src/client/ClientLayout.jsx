@@ -1,32 +1,36 @@
 import {
-  Button, Checkbox, Drawer, Label, Modal,
-  ModalBody, ModalFooter,
-  ModalHeader,
+  Button, Drawer, Label,
   Navbar,
   NavbarBrand,
-  Table,
-  TableBody, TableCell,
-  TableHead,
-  TableHeadCell, TableRow, TextInput
+  TextInput
 } from "flowbite-react";
 import {Link, Outlet, useNavigate, useParams} from "react-router-dom";
 import {HiShoppingCart} from "react-icons/hi";
 import React, {useEffect, useState} from "react";
 import {axios} from "../services/requests.js";
-import pushToast from "../helpers/sonnerToast.js";
-import {FaHome, FaSearch} from "react-icons/fa";
+import {FaHome, FaSearch, FaTrash} from "react-icons/fa";
 import {MdOutlineShoppingCartCheckout} from "react-icons/md";
 import {BiMinus, BiPlus} from "react-icons/bi";
 import {IoIosCloseCircleOutline} from "react-icons/io";
 import {formatVND} from "../helpers/parsers.js";
+import useLocalStorageState from "use-local-storage-state";
+import pushToast from "../helpers/sonnerToast.js";
 
 export default function ClientLayout() {
   const {id} = useParams();
   const [table, setTable] = useState(null);
   const [openCartDrawer, setOpenCartDrawer] = useState(false);
-  const productsCart = cart;
-  const [openModalForm, setOpenModalForm] = useState(false);
   const navigate = useNavigate();
+
+  const [cart, setCart] = useLocalStorageState("cart", {
+    defaultValue: [],
+  });
+  const [userInfo, setUserInfo] = useLocalStorageState("userInfo", {
+    defaultValue: {},
+  });
+  const [orderId, setOrderId] = useLocalStorageState("orderId", {
+    defaultValue: null,
+  });
 
   const handleClose = () => setOpenCartDrawer(false);
 
@@ -35,7 +39,83 @@ export default function ClientLayout() {
       const res = await axios.get(`/tables/${id}`)
       setTable(res.data);
     } catch (error) {
-      pushToast(error?.response?.data?.message || error?.message, "error");
+      console.error(error);
+      navigate("/");
+    }
+  }
+
+  const addToCart = ({
+   product,
+   price,
+   quantity,
+   option,
+   note
+  }) => {
+    const productIndex = cart.findIndex(item => item.product._id === product._id && item.option === option);
+
+    if (quantity === -1 && cart[productIndex].quantity === 1) {
+      removeFromCart({productId: product._id, option});
+      return;
+    }
+    if (quantity < 0 && productIndex === -1) {
+      return;
+    }
+
+    if (productIndex !== -1) {
+      cart[productIndex].quantity += quantity;
+    } else {
+      cart.push({
+        product,
+        quantity,
+        price,
+        option,
+        note
+      });
+    }
+    setCart(cart);
+    // pushToast("Đã cập nhật giỏ hàng!", "success");
+  }
+
+  const removeFromCart = ({productId, option}) => {
+    const productIndex = cart.findIndex(item => item.product._id === productId && item.option === option);
+    if (productIndex !== -1) {
+      cart.splice(productIndex, 1);
+    }
+    setCart(cart);
+    // pushToast("Đã xóa khỏi giỏ hàng", "success");
+  }
+
+  const onChangeQuantity = (event, item) => {
+    const value = parseInt(event.target.value);
+    if (value < 1 || isNaN(value)) {
+      event.target.value = 1;
+    }
+    addToCart({...item, quantity: parseInt(event.target.value) - item.quantity});
+  }
+
+  const onSubmitOrder = async () => {
+    if (!cart.length) {
+      pushToast("Giỏ hàng trống!", "error");
+      return;
+    }
+    try {
+      const res = await axios.post(`/orders`, {
+        table: id,
+        products: cart.map(item => ({
+          product: item.product._id,
+          option: item.option,
+          note: item.note,
+          quantity: item.quantity,
+          price: item.price
+        })),
+        name: userInfo.name || null,
+        phone: userInfo.phone || null
+      });
+      setCart([]);
+      setOrderId(res.data._id);
+      navigate(`/success`);
+    } catch (error) {
+      pushToast("Lỗi khi đặt hàng! Thử lại sau.", "error");
     }
   }
 
@@ -76,7 +156,7 @@ export default function ClientLayout() {
         </Link>
       </Navbar>
 
-      {id && <Outlet/>}
+      {id && <Outlet context={[cart, setCart, addToCart, removeFromCart]}/>}
 
       <Drawer open={openCartDrawer} onClose={handleClose} position={"right"} className={"w-screen h-screen max-h-dvh"}>
         <div className={"text-gray-800 relative h-full w-full"}>
@@ -91,65 +171,59 @@ export default function ClientLayout() {
             </div>
           </div>
           <div className={"flex flex-col gap-2 mt-8"}>
-            {productsCart.map((item, index) => (
-              <>
-                <div key={index} className={"flex justify-between p-2"}>
+            {cart.map((item, index) => (
+              <div key={index}>
+                <div className={"flex justify-between p-2"}>
                   <div className={"flex flex-col gap-1"}>
                     <span className={"font-bold text-xl"}>{item.product.name}</span>
                     <span>{item.option}</span>
                     <span>{item.note}</span>
                   </div>
                   <div className={"flex flex-col gap-1 items-end"}>
-                    <div className="w-32 max-w-sm relative">
-                      <div className="relative">
-                        <button
-                          id="decreaseButton"
-                          className="absolute right-9 top-1 rounded bg-slate-800 p-1.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                          type="button"
-                          // onClick={() => onChangeQuantity(quantity - 1)}
-                        >
-                          <BiMinus className="h-4 w-4"/>
-                        </button>
-                        <input
-                          id="amountInput"
-                          type="number"
-                          className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md pl-3 pr-20 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                          value={10}
-                          // onChange={(e) => onChangeQuantity(parseInt(e.target.value))}
-                        />
-                        <button
-                          id="increaseButton"
-                          className="absolute right-1 top-1 rounded bg-slate-800 p-1.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                          type="button"
-                          // onClick={() => onChangeQuantity(quantity + 1)}
-                        >
-                          <BiPlus className="h-4 w-4"/>
-                        </button>
+                    <div className={"flex gap-2 items-center"}>
+                      <FaTrash className={"text-red-500 cursor-pointer"}
+                               onClick={() => removeFromCart({productId: item.product._id, option: item.option})}/>
+                      <div className="w-32 max-w-sm relative">
+                        <div className="relative">
+                          <button
+                            id="decreaseButton"
+                            className="absolute right-9 top-1 rounded bg-slate-800 p-1.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                            type="button"
+                            onClick={() => addToCart({...item, quantity: -1})}
+                          >
+                            <BiMinus className="h-4 w-4"/>
+                          </button>
+                          <input
+                            id="amountInput"
+                            type="number"
+                            className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md pl-3 pr-20 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            value={item.quantity}
+                            onChange={(event) => onChangeQuantity(event, item)}
+                          />
+                          <button
+                            id="increaseButton"
+                            className="absolute right-1 top-1 rounded bg-slate-800 p-1.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                            type="button"
+                            onClick={() => addToCart({...item, quantity: 1})}
+                          >
+                            <BiPlus className="h-4 w-4"/>
+                          </button>
+                        </div>
                       </div>
                     </div>
                     <span className={"text-xl font-bold"}>{formatVND(item.price)}</span>
                   </div>
                 </div>
                 <hr className={"my-2 border-0 border-dashed border-b-2 border-b-gray-400"}/>
-              </>
+              </div>
             ))}
           </div>
           <div className={"flex justify-between items-center p-2 text-xl font-bold"}>
             <h1 className={""}>Tổng cộng:</h1>
-            <h1 className={""}>{productsCart.length} món | {formatVND(productsCart.reduce((acc, item) => acc + item.price, 0))}</h1>
+            <h1 className={""}>{cart.length} món
+              | {formatVND(cart.reduce((acc, item) => acc + (item.price * item.quantity), 0))}</h1>
           </div>
-          <div className={"flex flex-col gap-2 pb-4"}>
-            <Button className={"w-full"} size={"xl"} onClick={() => setOpenModalForm(true)}>Xác nhận</Button>
-            <Button className={"w-full"} color={"gray"} size={"xl"} onClick={handleClose}>Đóng</Button>
-          </div>
-        </div>
-      </Drawer>
-
-      <Modal show={openModalForm} size={"md"} onClose={() => setOpenModalForm(false)} popup>
-        {/*<Modal.Header/>*/}
-        <Modal.Body className={"pt-4"}>
-          <div className="space-y-3">
-            <h3 className="text-xl font-medium text-gray-900 dark:text-white">Hãy để lại thông tin của bạn!</h3>
+          <div className="space-y-3 p-2 mb-4">
             <div>
               <div className="mb-2 block">
                 <Label htmlFor="name" value="Họ Tên"/>
@@ -157,8 +231,10 @@ export default function ClientLayout() {
               <TextInput
                 id="name"
                 placeholder="Họ tên của bạn"
-                // value={email}
-                // onChange={(event) => setEmail(event.target.value)}
+                value={userInfo?.name}
+                onChange={(event) => {
+                  setUserInfo({...userInfo, name: event.target.value});
+                }}
                 required
               />
             </div>
@@ -169,123 +245,21 @@ export default function ClientLayout() {
               <TextInput
                 id="phone"
                 placeholder="Số điện thoại của bạn"
+                value={userInfo?.phone}
+                onChange={(event) => {
+                  setUserInfo({...userInfo, phone: event.target.value});
+                }}
                 required
               />
             </div>
-            <div className="w-full flex gap-2">
-              <Button onClick={() => {
-                navigate(`/success`);
-              }}>Đặt món</Button>
-              <Button onClick={() => setOpenModalForm(false)} color={"gray"}>Đóng</Button>
-            </div>
           </div>
-        </Modal.Body>
-      </Modal>
+          <div className={"flex flex-col gap-2 pb-4"}>
+            {!!cart?.length &&
+              <Button className={"w-full"} size={"xl"} onClick={onSubmitOrder}>Xác nhận</Button>}
+            <Button className={"w-full"} color={"gray"} size={"xl"} onClick={handleClose}>Đóng</Button>
+          </div>
+        </div>
+      </Drawer>
     </div>
   );
 }
-
-const cart = [
-  {
-    product: {
-      _id: "1",
-      name: "Cơm gà",
-    },
-    price: 50000,
-    option: "Không ớt",
-    note: "Ít dầu giúp em với ạ",
-    quantity: 2,
-  },
-  {
-    product: {
-      _id: "1",
-      name: "bún bò",
-    },
-    price: 30000,
-    option: "Không cay",
-    note: "Ít dầu giúp em với ạ",
-    quantity: 10,
-  },
-  {
-    product: {
-      _id: "1",
-      name: "bún riêu",
-    },
-    price: 30000,
-    option: "Không cay",
-    note: "Ít dầu giúp em với ạ",
-    quantity: 10,
-  },
-  {
-    product: {
-      _id: "1",
-      name: "Mooping kèm xôi" +
-        "",
-    },
-    price: 500000,
-    option: "Không ớt",
-    note: "Ít dầu giúp em với ạ",
-    quantity: 12,
-  },
-  {
-    product: {
-      _id: "1",
-      name: "bún bò",
-    },
-    price: 30000,
-    option: "Cay",
-    note: "Ít dầu giúp em với ạ",
-    quantity: 10,
-  },
-  {
-    product: {
-      _id: "1",
-      name: "Cơm gà",
-    },
-    price: 50000,
-    option: "Không ớt",
-    note: "Ít dầu giúp em với ạ",
-    quantity: 2,
-  },
-  {
-    product: {
-      _id: "1",
-      name: "bún bò",
-    },
-    price: 30000,
-    option: "Không cay",
-    note: "Ít dầu giúp em với ạ",
-    quantity: 10,
-  },
-  {
-    product: {
-      _id: "1",
-      name: "bún riêu",
-    },
-    price: 30000,
-    option: "Không cay",
-    note: "Ít dầu giúp em với ạ",
-    quantity: 10,
-  },
-  {
-    product: {
-      _id: "1",
-      name: "Mooping kèm xôi" +
-        "",
-    },
-    price: 500000,
-    option: "Không ớt",
-    note: "Ít dầu giúp em với ạ",
-    quantity: 12,
-  },
-  {
-    product: {
-      _id: "1",
-      name: "bún bò",
-    },
-    price: 30000,
-    option: "Cay",
-    note: "Ít dầu giúp em với ạ",
-    quantity: 10,
-  },
-]

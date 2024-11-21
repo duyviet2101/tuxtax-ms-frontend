@@ -2,7 +2,7 @@ import {Button, Drawer, HR, Navbar, Spinner, Textarea} from "flowbite-react";
 import React, {useEffect, useState} from "react";
 import {axios} from "../services/requests.js";
 import pushToast from "../helpers/sonnerToast.js";
-import {useParams, useSearchParams} from "react-router-dom";
+import {useOutletContext, useParams, useSearchParams} from "react-router-dom";
 import {formatVND} from "../helpers/parsers.js";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {FaPlusCircle} from "react-icons/fa";
@@ -21,6 +21,7 @@ export default function ClientProducts() {
     hasNextPage: false,
     hasPrevPage: false,
   });
+  const [cart, setCart, addToCart, removeFromCart] = useOutletContext();
 
   const fetchCategories = async () => {
     try {
@@ -128,16 +129,19 @@ export default function ClientProducts() {
         className={"p-4 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"}
       >
         {products.map(product => (
-          <ProductCard key={product._id} product={product}/>
+          <ProductCard key={product._id} product={product} addToCart={addToCart} cart={cart}/>
         ))}
       </InfiniteScroll>
     </>
   )
 }
 
-function ProductCard({product}) {
+function ProductCard({product, addToCart, cart}) {
   const [openProductDetail, setOpenProductDetail] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [option, setOption] = useState("");
+  const [note, setNote] = useState("");
+  const productInCart = cart.filter(item => item.product._id === product._id).reduce((acc, item) => acc + item.quantity, 0);
 
   const handleClose = () => setOpenProductDetail(false);
 
@@ -150,15 +154,35 @@ function ProductCard({product}) {
     }
   }
 
+  const onAdd = () => {
+    if (product.options && product.options.length > 0 && !option) {
+      pushToast("Vui lòng chọn option!", "warning");
+      return;
+    }
+
+    addToCart({
+      product: product,
+      quantity: quantity,
+      option: option,
+      note: note,
+      price: product.price,
+    });
+    // setOption("");
+    setQuantity(1);
+    setNote("");
+    handleClose();
+  }
+
   return (
     <>
       <div className={"rounded-lg bg-white p-2 text-gray-800"} onClick={() => setOpenProductDetail(true)}>
         <div className="h-40 overflow-hidden flex items-center justify-center rounded-lg relative">
           <img src={product.image} className={"rounded-lg object-center"}/>
-          <div className={"cursor-pointer absolute right-1 bottom-1 rounded-full border-gray-100 border-4 bg-gray-500 font-bold text-white p-3 size-10 flex justify-center items-center"}>
-            {/*<FaPlusCircle className={"text-2xl text-white bg-black p-1 rounded-full w-8 h-8 active:bg-gray-300 active:text-gray-800 transition"}/>*/}
-            1
-          </div>
+          {!!productInCart && <div
+            className={"cursor-pointer absolute right-1 bottom-1 rounded-full border-gray-100 border-4 bg-gray-500 font-bold text-white p-3 size-10 flex justify-center items-center"}
+          >
+            {productInCart}
+          </div>}
         </div>
         <div className="p-2">
           <h1 className={"text-lg font-bold"}>{product.name}</h1>
@@ -213,13 +237,15 @@ function ProductCard({product}) {
             {product?.options && product.options.length > 0 && (
               <div className={"flex flex-col gap-2"}>
                 <h1 className={"text-lg font-bold"}>Vui lòng chọn:</h1>
-                {product.options.map(option => (
+                {product.options.map((option, index) => (
                   <div className="flex items-center pe-4 border border-gray-200 rounded dark:border-gray-700"
-                       key={option}>
+                       key={product._id+"-"+option+"-"+index}>
                     <label htmlFor={option}
                            className="w-full text-lg py-2 ms-4 font-medium text-gray-900 dark:text-gray-300">{option}</label>
                     <input id={option} type="radio" value={option} name={product._id + "-option"}
-                           className="w-6 h-6 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                           className="w-6 h-6 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                           onChange={(e) => setOption(e.target.value)}
+                    />
                   </div>
                 ))}
                 <hr className={"my-2 border-0 border-dashed border-b-2 border-b-gray-400"}/>
@@ -227,14 +253,13 @@ function ProductCard({product}) {
             )}
             <div>
               <h1 className={"text-lg font-bold"}>Ghi chú:</h1>
-              <Textarea className={"w-full h-20 rounded"}/>
+              <Textarea className={"w-full h-20 rounded"}
+                        onChange={(e) => setNote(e.target.value)}
+              />
             </div>
             <div className={"w-full bottom-4 flex justify-between gap-2"}>
               <Button className={"min-w-fit flex items-center justify-center"} size={"xl"}
-                      onClick={() => {
-                        pushToast("Đã thêm vào giỏ hàng", "success");
-                        handleClose();
-                      }}
+                      onClick={onAdd}
               >
                 <BiCart className={"h-6 w-6 mr-2"}/>
                 Thêm vào giỏ hàng

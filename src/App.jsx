@@ -24,6 +24,7 @@ import ClientLayout from "./client/ClientLayout.jsx";
 import ClientProducts from "./client/ClientProducts.jsx";
 import OrderSuccess from "./client/OrderSuccess.jsx";
 import ClientCheckout from "./client/ClientCheckout.jsx";
+import ClientHome from "./client/ClientHome.jsx";
 
 function App() {
   return (
@@ -62,6 +63,7 @@ function App() {
               <Route path="*" element={<div>404</div>} />
             </Route>
             <Route path="/success" element={<OrderSuccess />} />
+            <Route path="/" element={<ClientHome/>} />
             <Route
               path="/"
               element={<ClientLayout />}

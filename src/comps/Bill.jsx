@@ -14,7 +14,7 @@ const Bill = forwardRef((props, ref) => {
   }));
 
   return (
-    <div className={""}>
+    <div className={"hidden"}>
       <div className="flex justify-center text-black" ref={ref}>
         <div className="w-[700px] h-full p-4 box-border my-2">
           <div className={"text-center"}>

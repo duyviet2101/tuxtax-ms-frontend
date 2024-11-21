@@ -1,5 +1,4 @@
 import moment from "moment";
-import {Table} from "flowbite-react";
 import {formatVND} from "../helpers/parsers.js";
 import {forwardRef} from "react";
 

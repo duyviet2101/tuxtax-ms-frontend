@@ -1,4 +1,4 @@
-import {Button, Drawer, HR, Navbar, Spinner} from "flowbite-react";
+import {Button, Drawer, HR, Navbar, Spinner, Textarea} from "flowbite-react";
 import React, {useEffect, useState} from "react";
 import {axios} from "../services/requests.js";
 import pushToast from "../helpers/sonnerToast.js";
@@ -166,7 +166,7 @@ function ProductCard({product}) {
         </div>
       </div>
 
-      <Drawer open={openProductDetail} onClose={handleClose} position="bottom" className={"h-screen p-0"}>
+      <Drawer open={openProductDetail} onClose={handleClose} position="bottom" className={"h-screen max-h-dvh p-0"}>
         <div className={"text-gray-800 relative h-full w-full"}>
           <div className="h-80 overflow-hidden flex items-center justify-center relative">
             <img src={product.image} className={"relative -translate-y-20"}/>
@@ -227,7 +227,7 @@ function ProductCard({product}) {
             )}
             <div>
               <h1 className={"text-lg font-bold"}>Ghi chú:</h1>
-              <textarea className={"w-full h-20 border border-gray-200 rounded dark:border-gray-700"}/>
+              <Textarea className={"w-full h-20 rounded"}/>
             </div>
             <div className={"w-full bottom-4 flex justify-between gap-2"}>
               <Button className={"min-w-fit flex items-center justify-center"} size={"xl"}

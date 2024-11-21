@@ -46,7 +46,7 @@ export default function ClientLayout() {
   if (!table) return null;
 
   return (
-    <div className="w-screen h-screen bg-gray-200 overflow-auto" id={"products-container"}>
+    <div className="w-screen h-screen max-h-svh bg-gray-200 overflow-auto" id={"products-container"}>
       <Navbar fluid rounded>
         <NavbarBrand as={Link} to={`/${id}`}>
           <img src="/Logo-tuxtax.png" className="mr-3 h-6 sm:h-9" alt="Tuxtax logo"/>
@@ -78,7 +78,7 @@ export default function ClientLayout() {
 
       {id && <Outlet/>}
 
-      <Drawer open={openCartDrawer} onClose={handleClose} position={"right"} className={"w-screen"}>
+      <Drawer open={openCartDrawer} onClose={handleClose} position={"right"} className={"w-screen h-screen max-h-dvh"}>
         <div className={"text-gray-800 relative h-full w-full"}>
           <div className={"flex gap-2 items-center justify-between"}>
             <div className={"flex gap-2 items-center"}>

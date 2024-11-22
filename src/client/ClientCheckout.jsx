@@ -19,7 +19,13 @@ export default function ClientCheckout() {
   const fetchOrder = async () => {
     try {
       const res = await axios.get(`/orders/${orderId}`);
-      setOrder(res.data)
+
+      if (res.data.table._id === id) {
+        setOrder(res.data);
+      } else {
+        setOrderId(null);
+        setOrder(null);
+      }
     } catch (error) {
       // pushToast(error?.response?.data?.message || error?.message, "error");
     }

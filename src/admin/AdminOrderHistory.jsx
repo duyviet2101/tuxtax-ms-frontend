@@ -59,8 +59,10 @@ export default function AdminOrderHistory() {
         paidAt: item?.paidAt ? moment(item?.paidAt).format("HH:mm, DD/MM/YYYY") : "N/A",
         checkoutMethod: item?.checkoutMethod === "banking" ? "Chuyển khoản" : "Tiền mặt",
         actions: <div className={"flex justify-center items-center gap-2"}>
-          <Button size={"xs"} color={"warning"} onClick={() => onReversePay(item?._id)}>Hoàn tác</Button>
-          <Button size={"xs"} color={"success"} onClick={() => navigate(`/admin/orders/${item._id}/checkout`)}>Xem</Button>
+          <Button size={"xs"} color={"warning"} onClick={(e) => {
+            e.stopPropagation();
+            onReversePay(item?._id);
+          }}>Hoàn tác</Button>
         </div>
       })));
 
@@ -192,7 +194,7 @@ export default function AdminOrderHistory() {
           onFilterApply={() => setSearchParams(searchParams)}
           renderCreator={null}
           onItemSelect={(item) => {
-            // navigate(`/admin/orders/${item._id}/checkout`);
+            navigate(`/admin/orders/${item._id}/checkout`);
           }}
           ItemModal={null}
           CreatorModal={null}

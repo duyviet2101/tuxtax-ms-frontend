@@ -32,7 +32,7 @@ export default function AdminCheckout() {
       const res = await axios.get(`/orders/${id}`);
       setOrder(res.data)
       setDiscounts(res.data.discounts || []);
-      setCheckoutMethod(res.data.checkoutMethod || "banking");
+      setCheckoutMethod(res.data.checkoutMethod);
     } catch (error) {
       navigate('/admin/orders');
       pushToast(error?.response?.data?.message || error?.message, "error");
@@ -300,9 +300,10 @@ export default function AdminCheckout() {
                   onChange={(e) => {
                     setCheckoutMethod(e.target.value);
                   }}
+                  disabled={order.isPaid}
                 >
                   <option value="cash">Tiền mặt</option>
-                  <option value="banking">Trực tuyến</option>
+                  <option value="banking">Chuyển khoản</option>
                 </Select>
               </div>
               <div className={"flex gap-2"}>

@@ -21,7 +21,7 @@ export default function ClientCheckout() {
       const res = await axios.get(`/orders/${orderId}`);
       setOrder(res.data)
     } catch (error) {
-      pushToast(error?.response?.data?.message || error?.message, "error");
+      // pushToast(error?.response?.data?.message || error?.message, "error");
     }
   }
 
@@ -48,7 +48,19 @@ export default function ClientCheckout() {
     }
   }
 
-  if (!order) return null;
+  if (!order || !orderId) return (
+    <>
+      <div className={"text-gray-800"}>
+        <div className={"flex gap-2 items-center px-8 mt-4"}>
+          <HiShoppingCart className="h-7 w-7"/>
+          <h1 className={"text-2xl font-bold p-2"}>Thanh toán</h1>
+        </div>
+        <div className={"p-4 m-4 bg-white rounded-lg"}>
+          <h1 className={"text-2xl font-bold"}>Không có đơn hàng</h1>
+        </div>
+      </div>
+    </>
+  );
 
   return (
     <>

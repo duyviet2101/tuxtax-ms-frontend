@@ -11,6 +11,9 @@ import {RiCloseCircleLine} from "react-icons/ri";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import {MdDelete, MdOutlinePublishedWithChanges} from "react-icons/md";
+import {FaDownload} from "react-icons/fa";
+import {QRCodeCanvas, QRCodeSVG} from "qrcode.react";
+import QRCode from "react-qr-code";
 
 const presentationFields = [
   {
@@ -37,6 +40,10 @@ const presentationFields = [
     key: "updatedAt",
     label: "Ngày cập nhật",
   },
+  {
+    key: "actions",
+    label: "Hành động",
+  }
 ]
 
 function UpdateTableForm({
@@ -431,6 +438,30 @@ export default function TablesManager() {
         active: tableStatus[table.active],
         createdAt: moment(table.createdAt).format("HH:mm, DD/MM/YYYY"),
         updatedAt: moment(table.updatedAt).format("HH:mm, DD/MM/YYYY"),
+        actions: (
+          <div className={"flex gap-2 justify-center items-center"}>
+            <div className={"hidden"}>
+              <QRCodeCanvas id={`qrcode-${table._id}`} value={`https://tuxtax-ms-frontend.vercel.app/${table._id}`} size={256}/>
+            </div>
+            <Button
+              size={"xs"}
+              onClick={(e) => {
+                e.stopPropagation();
+                const canvas = document.getElementById(`qrcode-${table._id}`);
+                const pngUrl = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+                let downloadLink = document.createElement("a");
+                downloadLink.href = pngUrl;
+                downloadLink.download = `QR-${table.name}.png`;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+              }}
+            >
+              <FaDownload className="mr-2 h-3 w-3"/>
+              Tải QR
+            </Button>
+          </div>
+        )
       })));
 
       setPagination({

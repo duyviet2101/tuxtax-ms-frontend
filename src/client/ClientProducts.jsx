@@ -1,11 +1,10 @@
 import {Button, Drawer, HR, Navbar, Spinner, Textarea} from "flowbite-react";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {axios} from "../services/requests.js";
 import pushToast from "../helpers/sonnerToast.js";
 import {useOutletContext, useParams, useSearchParams} from "react-router-dom";
 import {formatVND} from "../helpers/parsers.js";
 import InfiniteScroll from "react-infinite-scroll-component";
-import {FaPlusCircle} from "react-icons/fa";
 import {IoIosCloseCircleOutline} from "react-icons/io";
 import {BiCart, BiMinus, BiPlus} from "react-icons/bi";
 import {IoClose} from "react-icons/io5";
@@ -21,6 +20,7 @@ export default function ClientProducts() {
     hasNextPage: false,
     hasPrevPage: false,
   });
+  const prevPage = useRef(pagination.page);
   const [cart, setCart, addToCart, removeFromCart] = useOutletContext();
 
   const fetchCategories = async () => {
@@ -37,16 +37,22 @@ export default function ClientProducts() {
     }
   }
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (newPage = true) => {
     try {
       const res = await axios.get("/products", {
         params: {
-          page: pagination.page,
+          page: newPage ? pagination.page : 1,
           limit: 10,
           category: searchParams.get("category") || null,
+          search: searchParams.get("search") || null,
         }
       });
-      setProducts([...products, ...res.data.docs]);
+      if (newPage) {
+        setProducts([...products, ...res.data.docs]);
+      } else {
+        setProducts(res.data.docs);
+        prevPage.current = res.data.page;
+      }
       setPagination({
         page: res.data.page,
         totalPages: res.data.totalPages,
@@ -63,8 +69,16 @@ export default function ClientProducts() {
   }, []);
 
   useEffect(() => {
-    fetchProducts();
-  }, [pagination.page, searchParams.get("category")]);
+    if (prevPage.current !== pagination.page) {
+      // Nếu pagination.page thay đổi, gọi fetchProducts với newPage = true
+      fetchProducts(true);
+    } else {
+      // Nếu các dependency khác thay đổi, gọi fetchProducts thông thường
+      fetchProducts(false);
+    }
+    // Cập nhật giá trị hiện tại vào ref để dùng cho lần render tiếp theo
+    prevPage.current = pagination.page;
+  }, [pagination.page, searchParams.get("category"), searchParams.get("search")]);
 
   const fetchMoreData = () => {
     if (pagination.hasNextPage) {
@@ -82,13 +96,13 @@ export default function ClientProducts() {
           <Button pill outline={!!searchParams.get("category")} className={"min-w-fit"}
                   onClick={() => {
                     searchParams.delete("category");
-                    setProducts([]);
-                    setPagination({
-                      page: 1,
-                      totalPages: 1,
-                      hasNextPage: false,
-                      hasPrevPage: false,
-                    })
+                    // setProducts([]);
+                    // setPagination({
+                    //   page: 1,
+                    //   totalPages: 1,
+                    //   hasNextPage: false,
+                    //   hasPrevPage: false,
+                    // })
                     setSearchParams(searchParams);
                   }}
           >
@@ -100,13 +114,13 @@ export default function ClientProducts() {
                     className={"min-w-fit max-h-fit"}
                     onClick={() => {
                       searchParams.set("category", category.slug)
-                      setProducts([]);
-                      setPagination({
-                        page: 1,
-                        totalPages: 1,
-                        hasNextPage: false,
-                        hasPrevPage: false,
-                      })
+                      // setProducts([]);
+                      // setPagination({
+                      //   page: 1,
+                      //   totalPages: 1,
+                      //   hasNextPage: false,
+                      //   hasPrevPage: false,
+                      // })
                       setSearchParams(searchParams);
                     }}
             >

@@ -215,7 +215,7 @@ export default function AdminCheckout() {
                     Chiết khấu
                   </h1>
                   <div>
-                    {!order.isPaid && <Button
+                    {!order.isPaid ? <Button
                       color="blue"
                       onClick={() => {
                         setDiscounts([...discounts, {reason: "", value: null}]);
@@ -223,7 +223,11 @@ export default function AdminCheckout() {
                       size={"xs"}
                     >
                       <IoAddCircle className="h-5 w-5"/>
-                    </Button>}
+                    </Button> : (
+                      <h1 className="text-lg font-bold">
+                        {order?.discounts?.length} chiết khấu
+                      </h1>
+                    )}
                   </div>
                 </div>
                 <div className="grid gap-2 grid-cols-1">

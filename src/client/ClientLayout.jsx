@@ -1,10 +1,10 @@
 import {
   Button, Drawer, Label,
   Navbar,
-  NavbarBrand,
+  NavbarBrand, Popover,
   TextInput
 } from "flowbite-react";
-import {Link, Outlet, useNavigate, useParams} from "react-router-dom";
+import {Link, Outlet, useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {HiShoppingCart} from "react-icons/hi";
 import React, {useEffect, useState} from "react";
 import {axios} from "../services/requests.js";
@@ -21,6 +21,7 @@ export default function ClientLayout() {
   const [table, setTable] = useState(null);
   const [openCartDrawer, setOpenCartDrawer] = useState(false);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [cart, setCart] = useLocalStorageState("cart", {
     defaultValue: [],
@@ -136,11 +137,35 @@ export default function ClientLayout() {
           </div>
         </NavbarBrand>
         <div className={"flex gap-2"}>
-          <div className={"text-black p-2 cursor-pointer hover:bg-blue-200 rounded-lg"}>
-            <FaSearch className="h-7 w-7"/>
-          </div>
-          <div onClick={() => setOpenCartDrawer(true)} className={"text-black p-2 cursor-pointer hover:bg-blue-200 rounded-lg"}>
-            <HiShoppingCart className="h-7 w-7"/>
+          <Popover
+            content={
+              <TextInput
+                placeholder="Tìm kiếm món ăn"
+                className={"w-64 border-1 border-gray-300 rounded-lg"}
+                rightIcon={FaSearch}
+                value={searchParams.get("search") || ""}
+                onChange={(event) => {
+                  if (!event.target.value) {
+                    searchParams.delete("search");
+                  } else {
+                    searchParams.set("search", event.target.value);
+                  }
+                  setSearchParams(searchParams);
+                }}
+              />
+            }
+          >
+            <div className={"text-black p-2 cursor-pointer hover:bg-blue-200 rounded-lg"}
+                 onClick={() => {
+                   navigate(`/${id}/products`);
+                 }}
+            >
+              <FaSearch className="h-7 w-7"/>
+            </div>
+          </Popover>
+          <div onClick={() => setOpenCartDrawer(true)}
+               className={"text-black p-2 cursor-pointer hover:bg-blue-200 rounded-lg"}>
+          <HiShoppingCart className="h-7 w-7"/>
           </div>
         </div>
       </Navbar>

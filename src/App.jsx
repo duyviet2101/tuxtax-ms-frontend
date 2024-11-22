@@ -41,7 +41,6 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path={"/auth/login"} element={<Login/>} />
-            <Route path="/admin" element={<AdminHome />} />
             <Route
               path="/admin"
               element={
@@ -50,6 +49,7 @@ function App() {
                 </ProtectedRoute>
               }
             >
+              <Route path="" element={<AdminHome />} />
               <Route path="payment-success" element={<PaymentSuccess />} />
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="notifications" element={<AdminNotification />} />

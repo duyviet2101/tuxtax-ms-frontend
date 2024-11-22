@@ -128,6 +128,33 @@ function UpdateTableForm({
       <div className="grid gap-4 mb-4 grid-cols-2">
         <div className="col-span-2">
           <div className="mb-2">
+            <h1 className="text-gray-900 dark:text-white">Mã QR</h1>
+
+            <div className="flex gap-2 items-center">
+              <QRCode value={`https://tuxtax-ms-frontend.vercel.app/${id}`} size={256}/>
+              <Button
+                size={"xs"}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const canvas = document.getElementById(`qrcode-${id}`);
+                  const pngUrl = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+                  let downloadLink = document.createElement("a");
+                  downloadLink.href = pngUrl;
+                  downloadLink.download = `QR-${data.name}.png`;
+                  document.body.appendChild(downloadLink);
+                  downloadLink.click();
+                  document.body.removeChild(downloadLink);
+                }}
+              >
+                <FaDownload className="mr-2 h-3 w-3"/>
+                Tải QR
+              </Button>
+            </div>
+          </div>
+
+        </div>
+        <div className="col-span-2">
+          <div className="mb-2">
             <Label htmlFor="name" value="Tên"/>
           </div>
           <TextInput
@@ -248,9 +275,11 @@ function UpdateTableForm({
 }
 
 function CreateTableForm({
-  fetchData = () => { },
-  setOpenCreateModal = () => { }
-}) {
+                           fetchData = () => {
+                           },
+                           setOpenCreateModal = () => {
+                           }
+                         }) {
   const navigate = useNavigate();
   const [floors, setFloors] = useState([]);
 

@@ -14,6 +14,7 @@ const errorsExplain = {
   'data_missing': "Dữ liệu không đủ!",
   'data_required': "Dữ liệu bắt buộc!",
   'table_has_order_pending': "Bàn đang có order chưa hoàn thành!",
+  'table_not_active': "Bàn không hoạt động!",
 }
 
 export default errorsExplain;

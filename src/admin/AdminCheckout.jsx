@@ -25,7 +25,7 @@ export default function AdminCheckout() {
     _id: item._id
   })) || [];
   const [discounts, setDiscounts] = useState([]);
-  const [checkoutMethod, setCheckoutMethod] = useState("banking");
+  const [checkoutMethod, setCheckoutMethod] = useState("");
 
   const fetchOrder = async () => {
     try {
@@ -302,6 +302,7 @@ export default function AdminCheckout() {
                   }}
                   disabled={order.isPaid}
                 >
+                  <option value="">Chọn phương thức</option>
                   <option value="cash">Tiền mặt</option>
                   <option value="banking">Chuyển khoản</option>
                 </Select>

@@ -29,11 +29,11 @@ function AdminDashboardItemCard({ icon, title, description }) {
 
 export default function AdminHome() {
   return (
-    <div className="flex h-screen w-screen bg-gray-50">
+    <div className="flex h-screen w-screen bg-blue-200">
       <div className="fixed flex-col w-full h-full text-gray-900 overflow-auto">
         <div className="h-full w-full p-6 flex flex-col items-center overflow-scrool">
           <div className={"h-full basis-1/3 flex items-center"}>
-            <div className={"border pt-16 p-8 rounded-lg relative flex flex-col gap-2 shadow-xl"}>
+            <div className={"border pt-16 p-8 rounded-lg relative flex flex-col gap-2 shadow-xl bg-white"}>
               <div className={"h-32 w-32 absolute top-0 -translate-x-1/2 -translate-y-1/2 left-1/2"}>
                 <img src={"/Logo-tuxtax.png"}
                      className={"h-full w-full rounded-full object-contain border-gray-400 border-2"}/>

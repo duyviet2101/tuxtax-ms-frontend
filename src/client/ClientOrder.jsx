@@ -32,6 +32,7 @@ export default function ClientOrder() {
         params: {
           page: 1,
           limit: 100,
+          filters: "active:true"
         }
       });
       setCategories(res.data.docs);

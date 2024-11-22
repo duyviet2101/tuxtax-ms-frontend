@@ -45,6 +45,7 @@ export default function ClientProducts() {
           limit: 10,
           category: searchParams.get("category") || null,
           search: searchParams.get("search") || null,
+          filters: "status:available",
         }
       });
       if (newPage) {

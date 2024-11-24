@@ -93,7 +93,7 @@ const Bill = forwardRef((props, ref) => {
                   Hình thức:
                 </h1>
                 <h1 className="mr-2">
-                  {order?.checkoutMethod === "banking" ? "Chuyển khoản" : "Tiền mặt"}
+                  {order?.checkoutMethod === "banking" ? "Chuyển khoản" : order?.checkoutMethod === "cash" ? "Tiền mặt" : "N/A"}
                 </h1>
               </div>
               {/*<div className={"flex mt-4"}>*/}

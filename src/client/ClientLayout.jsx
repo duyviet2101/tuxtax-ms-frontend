@@ -1,5 +1,5 @@
 import {
-  Button, Drawer, Label,
+  Button, Drawer, Dropdown, Label,
   Navbar,
   NavbarBrand, Popover,
   TextInput
@@ -15,6 +15,8 @@ import {IoIosCloseCircleOutline} from "react-icons/io";
 import {formatVND} from "../helpers/parsers.js";
 import useLocalStorageState from "use-local-storage-state";
 import pushToast from "../helpers/sonnerToast.js";
+import getFlag from "../helpers/getFlag.js";
+import {useTranslation} from "react-i18next";
 
 export default function ClientLayout() {
   const {id} = useParams();
@@ -22,6 +24,11 @@ export default function ClientLayout() {
   const [openCartDrawer, setOpenCartDrawer] = useState(false);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { t, i18n } = useTranslation();
+
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+  }
 
   const [cart, setCart] = useLocalStorageState("cart", {
     defaultValue: [],
@@ -96,7 +103,7 @@ export default function ClientLayout() {
 
   const onSubmitOrder = async () => {
     if (!cart.length) {
-      pushToast("Giỏ hàng trống!", "error");
+      pushToast(t("cartEmpty"), "error");
       return;
     }
     try {
@@ -116,7 +123,7 @@ export default function ClientLayout() {
       setOrderId(res.data._id);
       navigate(`/success`);
     } catch (error) {
-      pushToast("Lỗi khi đặt hàng! Thử lại sau.", "error");
+      pushToast(t("errorPlaceOrdert"), "error");
     }
   }
 
@@ -127,12 +134,12 @@ export default function ClientLayout() {
   if (!table) return null;
 
   return (
-    <div className="w-screen h-screen max-h-svh bg-gray-200 overflow-auto" id={"products-container"}>
+    <div className="w-screen h-screen max-h-svh bg-gray-200 overflow-auto relative" id={"products-container"}>
       <Navbar fluid rounded>
         <NavbarBrand as={Link} to={`/${id}`}>
           <img src="/Logo-tuxtax.png" className="mr-3 h-6 sm:h-9" alt="Tuxtax logo"/>
           <div className={"flex flex-col gap-1"}>
-            <span className="text-sm font-bold text-gray-800 text-wrap">TUXTAX ẨM THỰC THÁI LAN</span>
+            <span className="text-sm font-bold text-gray-800 text-wrap">{t("name")}</span>
             <span className="text-sm font-bold text-gray-800 text-wrap">Bàn: {table.floor.slug}-{table.name}</span>
           </div>
         </NavbarBrand>
@@ -140,7 +147,7 @@ export default function ClientLayout() {
           <Popover
             content={
               <TextInput
-                placeholder="Tìm kiếm món ăn"
+                placeholder={t("searchPlaceholder")}
                 className={"w-64 border-1 border-gray-300 rounded-lg"}
                 rightIcon={FaSearch}
                 value={searchParams.get("search") || ""}
@@ -163,9 +170,23 @@ export default function ClientLayout() {
               <FaSearch className="h-7 w-7"/>
             </div>
           </Popover>
+          <div className={"flex justify-center items-center"}>
+            <Dropdown
+              placement={"bottom"}
+              // label={getFlag({lang: i18n.language})}
+              renderTrigger={() => <span>
+                {getFlag({lang: i18n.language})}
+              </span>}
+              inline={true}
+            >
+              <Dropdown.Item onClick={() => changeLanguage('vi')}>🇻🇳 VI</Dropdown.Item>
+              <Dropdown.Item onClick={() => changeLanguage('en')}>🇺🇸 EN</Dropdown.Item>
+              <Dropdown.Item onClick={() => changeLanguage('th')}>🇹🇭 TH</Dropdown.Item>
+            </Dropdown>
+          </div>
           <div onClick={() => setOpenCartDrawer(true)}
                className={"text-black p-2 cursor-pointer hover:bg-blue-200 rounded-lg"}>
-          <HiShoppingCart className="h-7 w-7"/>
+            <HiShoppingCart className="h-7 w-7"/>
           </div>
         </div>
       </Navbar>
@@ -173,11 +194,12 @@ export default function ClientLayout() {
         <Link to={`/${id}`}
               className={"text-gray-800 w-1/2 h-full p-2 flex gap-2 items-center justify-center active:bg-gray-300 transition rounded py-2"}>
           <FaHome className="h-5 w-5"/>
-          <h1 className={""}>Trang chủ</h1>
+          <h1 className={""}>{t("homepage")}</h1>
         </Link>
-        <Link to={`/${id}/checkout`} className={"text-gray-800 w-1/2 h-full p-2 flex gap-2 items-center justify-center active:bg-gray-300 transition rounded py-2"}>
+        <Link to={`/${id}/checkout`}
+              className={"text-gray-800 w-1/2 h-full p-2 flex gap-2 items-center justify-center active:bg-gray-300 transition rounded py-2"}>
           <MdOutlineShoppingCartCheckout className="h-5 w-5"/>
-          <h1 className={""}>Thanh toán</h1>
+          <h1 className={""}>{t("checkout.title")}</h1>
         </Link>
       </Navbar>
 
@@ -188,7 +210,7 @@ export default function ClientLayout() {
           <div className={"flex gap-2 items-center justify-between"}>
             <div className={"flex gap-2 items-center"}>
               <HiShoppingCart className="h-7 w-7"/>
-              <h1 className={"text-2xl font-bold p-2"}>Món ăn trong giỏ</h1>
+              <h1 className={"text-2xl font-bold p-2"}>{t("cart.title")}</h1>
             </div>
             <div className={""} onClick={handleClose}>
               <IoIosCloseCircleOutline
@@ -244,18 +266,17 @@ export default function ClientLayout() {
             ))}
           </div>
           <div className={"flex justify-between items-center p-2 text-xl font-bold"}>
-            <h1 className={""}>Tổng cộng:</h1>
-            <h1 className={""}>{cart.length} món
-              | {formatVND(cart.reduce((acc, item) => acc + (item.price * item.quantity), 0))}</h1>
+            <h1 className={""}>{t("cart.total")}:</h1>
+            <h1 className={""}>{cart.length} {t("cart.dishes")}  | {formatVND(cart.reduce((acc, item) => acc + (item.price * item.quantity), 0))}</h1>
           </div>
           <div className="space-y-3 p-2 mb-4">
             <div>
               <div className="mb-2 block">
-                <Label htmlFor="name" value="Họ Tên"/>
+                <Label htmlFor="name" value={t("cart.fullName")}/>
               </div>
               <TextInput
                 id="name"
-                placeholder="Họ tên của bạn"
+                placeholder={t("cart.fullName")}
                 value={userInfo?.name}
                 onChange={(event) => {
                   setUserInfo({...userInfo, name: event.target.value});
@@ -265,11 +286,11 @@ export default function ClientLayout() {
             </div>
             <div>
               <div className="mb-2 block">
-                <Label htmlFor="phone" value="SĐT"/>
+                <Label htmlFor="phone" value={t("cart.phoneNumber")}/>
               </div>
               <TextInput
                 id="phone"
-                placeholder="Số điện thoại của bạn"
+                placeholder={t("cart.phoneNumber")}
                 value={userInfo?.phone}
                 onChange={(event) => {
                   setUserInfo({...userInfo, phone: event.target.value});
@@ -280,8 +301,8 @@ export default function ClientLayout() {
           </div>
           <div className={"flex flex-col gap-2 pb-4"}>
             {!!cart?.length &&
-              <Button className={"w-full"} size={"xl"} onClick={onSubmitOrder}>Xác nhận</Button>}
-            <Button className={"w-full"} color={"gray"} size={"xl"} onClick={handleClose}>Đóng</Button>
+              <Button className={"w-full"} size={"xl"} onClick={onSubmitOrder}>{t("cart.confirmOrder")}</Button>}
+            <Button className={"w-full"} color={"gray"} size={"xl"} onClick={handleClose}>{t("cart.closeOrder")}</Button>
           </div>
         </div>
       </Drawer>

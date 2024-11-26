@@ -8,6 +8,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import {IoIosCloseCircleOutline} from "react-icons/io";
 import {BiCart, BiMinus, BiPlus} from "react-icons/bi";
 import {IoClose} from "react-icons/io5";
+import {useTranslation} from "react-i18next";
 
 export default function ClientProducts() {
   const [categories, setCategories] = useState([]);
@@ -157,13 +158,14 @@ function ProductCard({product, addToCart, cart}) {
   const [option, setOption] = useState("");
   const [note, setNote] = useState("");
   const productInCart = cart.filter(item => item.product._id === product._id).reduce((acc, item) => acc + item.quantity, 0);
+  const {t} = useTranslation();
 
   const handleClose = () => setOpenProductDetail(false);
 
   const onChangeQuantity = (value) => {
     if (value < 1) {
       setQuantity(1);
-      pushToast("Số lượng không thể nhỏ hơn 1", "error");
+      pushToast(t("product.quantityMinimum"), "error");
     } else {
       setQuantity(value);
     }
@@ -171,7 +173,7 @@ function ProductCard({product, addToCart, cart}) {
 
   const onAdd = () => {
     if (product.options && product.options.length > 0 && !option) {
-      pushToast("Vui lòng chọn option!", "warning");
+      pushToast(t("pleaseSelectOption"), "warning");
       return;
     }
 
@@ -251,7 +253,7 @@ function ProductCard({product, addToCart, cart}) {
             <hr className={"my-2 border-0 border-dashed border-b-2 border-b-gray-400"}/>
             {product?.options && product.options.length > 0 && (
               <div className={"flex flex-col gap-2"}>
-                <h1 className={"text-lg font-bold"}>Vui lòng chọn:</h1>
+                <h1 className={"text-lg font-bold"}>{t("product.pleaseSelectOption")}:</h1>
                 {product.options.map((option, index) => (
                   <div className="flex items-center pe-4 border border-gray-200 rounded dark:border-gray-700"
                        key={product._id+"-"+option+"-"+index}>
@@ -267,7 +269,7 @@ function ProductCard({product, addToCart, cart}) {
               </div>
             )}
             <div>
-              <h1 className={"text-lg font-bold"}>Ghi chú:</h1>
+              <h1 className={"text-lg font-bold"}>{t("product.note")}:</h1>
               <Textarea className={"w-full h-20 rounded"}
                         onChange={(e) => setNote(e.target.value)}
               />
@@ -277,12 +279,12 @@ function ProductCard({product, addToCart, cart}) {
                       onClick={onAdd}
               >
                 <BiCart className={"h-6 w-6 mr-2"}/>
-                Thêm vào giỏ hàng
+                {t("product.add")}
               </Button>
               <Button color={"gray"} className={"w-full flex items-center justify-center"} size={"xl"}
                       onClick={handleClose}>
                 <IoClose className={"h-6 w-6 mr-2"}/>
-                Hủy
+                {t("product.cancel")}
               </Button>
             </div>
           </div>

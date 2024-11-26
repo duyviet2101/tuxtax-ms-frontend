@@ -4,6 +4,8 @@ import './index.css'
 import App from './App.jsx'
 import { Flowbite } from 'flowbite-react'
 
+import './i18n.js';
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Flowbite>

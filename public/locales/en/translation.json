@@ -1,0 +1,37 @@
+{
+  "pleaseSelectTable": "Please select a table first!",
+  "cartEmpty": "Your cart is empty!",
+  "errorPlaceOrder": "Error when placing order! Try again later!",
+  "name": "TUXTAX THAI CUISINE",
+  "searchPlaceholder": "Search for a dish...",
+  "homepage": "Home Page",
+  "checkout": {
+    "title": "Checkout",
+    "confirmMessage": "Are you sure you want to checkout this order?",
+    "noOrder": "No order to checkout!",
+    "quantity": "Quantity",
+    "price": "Price",
+    "discount": "Discount",
+    "noDiscount": "No discount",
+    "paymentMethod": "Payment Method",
+    "cash": "Cash",
+    "banking": "Banking",
+    "isPaid": "Is Paid"
+  },
+  "cart": {
+    "title": "Cart",
+    "total": "Total",
+    "confirmOrder": "Confirm Order",
+    "closeOrder": "Close",
+    "dishes": "Dishes",
+    "fullName": "Full Name",
+    "phoneNumber": "Phone Number"
+  },
+  "product": {
+    "quantityMinimum": "Minimum quantity is 1",
+    "pleaseSelectOption": "Please select an option",
+    "note": "Note",
+    "add": "Add product to cart",
+    "cancel": "Cancel"
+  }
+}

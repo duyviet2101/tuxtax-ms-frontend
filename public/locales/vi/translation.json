@@ -1,0 +1,40 @@
+{
+  "pleaseSelectTable": "Vui lòng chọn bàn trước!",
+  "cartEmpty": "Giỏ hàng của bạn đang trống!",
+  "errorPlaceOrder": "Đã xảy ra lỗi khi đặt hàng! Thử lại sau!",
+  "name": "TUXTAX ẨM THỰC THÁI LAN",
+  "searchPlaceholder": "Tìm kiếm món ăn...",
+  "homepage": "Trang Chủ",
+  "checkout": {
+    "title": "Thanh Toán",
+    "confirmMessage": "Bạn có chắc chắn muốn thanh toán đơn hàng này không?",
+    "noOrder": "Không có đơn hàng nào để thanh toán!",
+    "quantity": "Số Lượng",
+    "price": "Giá",
+    "discount": "Giảm Giá",
+    "noDiscount": "Không có giảm giá",
+    "paymentMethod": "Phương Thức Thanh Toán",
+    "cash": "Tiền Mặt",
+    "banking": "Chuyển Khoản",
+    "isPaid": "Đã Thanh Toán"
+  },
+  "cart": {
+    "title": "Giỏ Hàng",
+    "total": "Tổng",
+    "confirmOrder": "Xác Nhận",
+    "closeOrder": "Đóng",
+    "dishes": "Món Ăn",
+    "fullName": "Họ Tên",
+    "phoneNumber": "Số Điện Thoại",
+    "noOrder": "Không có đơn hàng nào trong giỏ hàng!",
+    "quantity": "Số Lượng",
+    "price": "Giá"
+  },
+    "product": {
+      "quantityMinimum": "Số lượng tối thiểu là 1",
+      "pleaseSelectOption": "Vui lòng chọn một tùy chọn",
+      "note": "Ghi Chú",
+      "add": "Thêm sản phẩm vào giỏ hàng",
+      "cancel": "Hủy"
+    }
+}

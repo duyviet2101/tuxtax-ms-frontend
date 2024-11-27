@@ -275,7 +275,7 @@ function ProductCard({product, addToCart, cart}) {
               />
             </div>
             <div className={"w-full bottom-4 flex justify-between gap-2"}>
-              <Button className={"min-w-fit flex items-center justify-center"} size={"xl"}
+              <Button className={"min-w-fit flex items-center justify-center w-full"} size={"xl"}
                       onClick={onAdd}
               >
                 <BiCart className={"h-6 w-6 mr-2"}/>

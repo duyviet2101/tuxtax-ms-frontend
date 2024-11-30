@@ -1,7 +1,8 @@
 import {Button, Dropdown} from "flowbite-react";
 import {Link} from "react-router-dom";
 import {useTranslation} from "react-i18next";
-import getFlag from "../helpers/getFlag.js";
+import getFlag from "../helpers/getFlag.jsx";
+import React from "react";
 
 export default function ClientHome() {
   const { t, i18n } = useTranslation();
@@ -37,9 +38,18 @@ export default function ClientHome() {
           placement={"top"}
           label={getFlag({lang: i18n.language})}
         >
-          <Dropdown.Item onClick={() => changeLanguage('vi')}>🇻🇳 VI</Dropdown.Item>
-          <Dropdown.Item onClick={() => changeLanguage('en')}>🇺🇸 EN</Dropdown.Item>
-          <Dropdown.Item onClick={() => changeLanguage('th')}>🇹🇭 TH</Dropdown.Item>
+          <Dropdown.Item onClick={() => changeLanguage('vi')} className={"flex justify-start items-center cursor-pointer"}>
+            <img src={"/vietnam.png"} className={"w-5 mr-2"}/>
+            VI
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => changeLanguage('en')} className={"flex justify-start items-center cursor-pointer"}>
+            <img src={"/united-states.png"} className={"w-5 mr-2"}/>
+            EN
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => changeLanguage('th')} className={"flex justify-start items-center cursor-pointer"}>
+            <img src={"/thailand.png"} className={"w-5 mr-2"}/>
+            TH
+          </Dropdown.Item>
         </Dropdown>
       </div>
     </div>

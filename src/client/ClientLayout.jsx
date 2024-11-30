@@ -15,7 +15,7 @@ import {IoIosCloseCircleOutline} from "react-icons/io";
 import {formatVND} from "../helpers/parsers.js";
 import useLocalStorageState from "use-local-storage-state";
 import pushToast from "../helpers/sonnerToast.js";
-import getFlag from "../helpers/getFlag.js";
+import getFlag from "../helpers/getFlag.jsx";
 import {useTranslation} from "react-i18next";
 
 export default function ClientLayout() {
@@ -173,11 +173,11 @@ export default function ClientLayout() {
           <div className={"flex justify-center items-center"}>
             <Dropdown
               placement={"bottom"}
-              // label={getFlag({lang: i18n.language})}
               renderTrigger={() => <span>
                 {getFlag({lang: i18n.language})}
               </span>}
               inline={true}
+              className={"cursor-pointer"}
             >
               <Dropdown.Item onClick={() => changeLanguage('vi')} className={"flex justify-start items-center cursor-pointer"}>
                 <img src={"/vietnam.png"} className={"w-5 mr-2"}/>

@@ -57,7 +57,7 @@ export default function AdminCheckout() {
       } catch (error) {
         pushToast(error?.response?.data?.message || error?.message, "error");
       }
-    } else {
+    } else if (checkoutMethod === "banking") {
       try {
         const res = await axios.post(`/checkout/create-payment-url`, {
           orderId: id,
@@ -67,6 +67,8 @@ export default function AdminCheckout() {
       } catch (error) {
         pushToast(error?.response?.data?.message || error?.message, "error");
       }
+    } else {
+      pushToast("Chưa chọn phương thức thanh toán", "error");
     }
   }
 

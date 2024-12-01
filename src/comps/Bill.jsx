@@ -54,8 +54,8 @@ const Bill = forwardRef((props, ref) => {
                 <b>Thanh toán:</b> {moment(order?.paidAt).format("HH:mm DD/MM/YYYY")}
               </h1>
             </div>
-            <div className={"mt-4"}>
-              <table className={"border-0"}>
+            <div className={"mt-4 w-full"}>
+              <table className={"border-0 w-full"}>
                 <thead className={"border-0"}>
                 <tr>
                   {tableFields.map((field) => (

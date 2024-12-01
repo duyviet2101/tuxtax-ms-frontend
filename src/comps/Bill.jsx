@@ -59,7 +59,7 @@ const Bill = forwardRef((props, ref) => {
                 <thead className={"border-0"}>
                 <tr>
                   {tableFields.map((field) => (
-                    <th key={field.key} className={"border-y-2 border-y-black border-dashed p-2 border-x-0 text-left"}>
+                    <th key={field.key} className={`border-y-2 border-y-black border-dashed p-2 border-x-0 text-left ${(field.key === 'price' || field.key === 'total' || field.key === 'quantity') ? "text-right" : ""}`}>
                       {field.label}
                     </th>
                   ))}
@@ -69,7 +69,7 @@ const Bill = forwardRef((props, ref) => {
                   {product.map((item) => (
                     <tr key={item._id}>
                       {tableFields.map((field) => (
-                        <td key={field.key + "-" + item._id} className={`text-black border-y border-y-black border-dashed p-2 border-x-0 ${(field.key === 'price' || field.key === 'total') ? "text-right" : ""}`}>
+                        <td key={field.key + "-" + item._id} className={`text-black border-y border-y-black border-dashed p-2 border-x-0 ${(field.key === 'price' || field.key === 'total' || field.key === "quantity") ? "text-right" : ""}`}>
                           {item[field.key]}
                         </td>
                       ))}

@@ -1,14 +1,16 @@
-import {Button, Table, Tabs} from "flowbite-react";
+import {Badge, Button, Tooltip} from "flowbite-react";
 import {FaCartArrowDown, FaHistory} from "react-icons/fa";
 import {useEffect, useState} from "react";
 import {axios} from "../services/requests.js";
 import {isNull} from "lodash";
-import {MdOutlinePendingActions, MdTableRestaurant} from "react-icons/md";
-import {Link, useLocation, useNavigate, useSearchParams} from "react-router-dom";
+import {MdTableRestaurant} from "react-icons/md";
+import {Link, useNavigate} from "react-router-dom";
 import pushToast from "../helpers/sonnerToast.js";
 import {formatVND} from "../helpers/parsers.js";
-import ListView from "../comps/ListView.jsx";
-import moment from "moment";
+import {IoBagCheckOutline} from "react-icons/io5";
+import {PiCookingPotDuotone} from "react-icons/pi";
+import {getSocket} from "../socket.js";
+const socket = getSocket();
 
 export default function AdminOrders() {
   const [floors, setFloors] = useState([]);
@@ -42,29 +44,52 @@ export default function AdminOrders() {
     fetchFloors();
   }, []);
 
-  useEffect(() => {
-    const fetchTables = async () => {
-      const res = await axios.get('/tables', {
-        params: {
-          limit: 100,
-          page: 1,
-          floor: selectedFloor
-        }
-      })
-      res?.data?.docs.sort((a, b) => {
-        if (a?.order && !b?.order) {
-          return -1;
-        }
-        if (!a?.order && b?.order) {
-          return 1;
-        }
-        return 0;
-      });
+  const fetchTables = async () => {
+    const res = await axios.get('/tables', {
+      params: {
+        limit: 100,
+        page: 1,
+        floor: selectedFloor
+      }
+    })
+    res?.data?.docs.sort((a, b) => {
+      if (a?.order && !b?.order) {
+        return -1;
+      }
+      if (!a?.order && b?.order) {
+        return 1;
+      }
+      return 0;
+    });
 
-      setTables(res?.data?.docs);
-    }
+    setTables(res?.data?.docs);
+  }
+
+  useEffect(() => {
     fetchTables();
   }, [selectedFloor]);
+
+  useEffect(() => {
+    // Join the "admins" room
+    socket.emit("joinAdmin");
+
+    // Listen for new order notifications
+    socket.on("SERVER_ADD_ORDER", (data) => {
+      // console.log("New order received for Admin:", data);
+      pushToast(`Đã nhận order mới cho bàn ${data?.table?.name}`, "success");
+      fetchTables();
+    });
+    socket.on("UPDATE_ORDERS", (data) => {
+      pushToast(`Danh sách order có cập nhật!`, "success");
+      fetchTables();
+    });
+
+    // Cleanup
+    return () => {
+      socket.off("SERVER_ADD_ORDER");
+      socket.off("UPDATE_ORDERS");
+    };
+  }, []);
 
   return (
     <div className="flex items-start justify-center h-full w-full">
@@ -103,7 +128,7 @@ export default function AdminOrders() {
           <div className="grid lg:grid-cols-8 sm:grid-cols-6 grid-cols-4 gap-4 mt-4">
             {tables.map((table) => (
               <div key={table._id}
-                   className={`bg-${table?.order ? "blue" : "gray"}-100 rounded-2xl p-4 flex flex-col items-center justify-center cursor-pointer`}
+                   className={`bg-${table?.order ? "blue" : "gray"}-100 rounded-2xl p-4 flex flex-col items-center justify-center cursor-pointer relative`}
                    onClick={async () => {
                      if (table?.order) {
                        navigate(`/admin/orders/${table.order._id}`);
@@ -116,6 +141,7 @@ export default function AdminOrders() {
                               name: "Khách lẻ",
                               phone: "N/A",
                               products: [],
+                              isAdmin: true
                             });
                             navigate(`/admin/orders/${res?.data?._id}`);
                           } catch (error) {
@@ -132,6 +158,14 @@ export default function AdminOrders() {
                   className={`text-center font-bold dark:text-gray-200 text-black`}>{`${table.floor.slug}-${table.name}`}</span>
                 <span
                   className={`text-center dark:text-gray-200 text-black`}>({`${table.capacity} chỗ`})</span>
+                <div className={"flex gap-2 mt-2"}>
+                  <Tooltip content={isPaid(table?.order)}>
+                    <Badge icon={IoBagCheckOutline} color={`${table?.order?.isPaid === true ? "green" : "red"}`} className={""} size={"xs"}></Badge>
+                  </Tooltip>
+                  <Tooltip content={status(table?.order)}>
+                    <Badge icon={PiCookingPotDuotone} color={`${table?.order?.status === "completed" ? "green" : "red"}`} className="" size={"xs"}></Badge>
+                  </Tooltip>
+                </div>
               </div>
             ))}
           </div>
@@ -148,3 +182,18 @@ const colorsButton = [
   "purpleToPink",
   "pinkToOrange",
 ]
+
+const isPaid = (order) => {
+  if (!order) {
+    return "Trống";
+  }
+
+  return order?.isPaid ? "Đã thanh toán" : "Chưa thanh toán";
+}
+
+const status = (order) => {
+  if (!order) {
+    return "Trống";
+  }
+  return order?.status === "pending" ? "Đang nấu" : "Đã trả hết món";
+}

@@ -11,7 +11,7 @@ i18n
   .init({
     fallbackLng: 'vi',
     supportedLngs: ['vi', 'en', 'th'],
-    debug: true,
+    debug: false,
     backend: {
       loadPath: '/locales/{{lng}}/translation.json', // Translation file path
     },

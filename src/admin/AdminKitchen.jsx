@@ -5,6 +5,8 @@ import {axios} from "../services/requests.js";
 import {formatVND} from "../helpers/parsers.js";
 import pushToast from "../helpers/sonnerToast.js";
 import {IoFastFood} from "react-icons/io5";
+import {getSocket} from "../socket.js";
+const socket = getSocket();
 
 export default function AdminKitchen() {
   const navigate = useNavigate();
@@ -59,6 +61,22 @@ export default function AdminKitchen() {
       pushToast(error?.response?.data?.message || error?.message, "error");
     }
   }
+
+  useEffect(() => {
+    // Join the "admins" room
+    socket.emit("joinAdmin");
+
+    // Listen for new order notifications
+    socket.on("UPDATE_ORDERS", (data) => {
+      pushToast(`Danh sách order có cập nhật!`, "success");
+      fetchOrders();
+    });
+
+    // Cleanup
+    return () => {
+      socket.off("UPDATE_ORDERS");
+    };
+  }, []);
 
   if (!orders) return null;
 

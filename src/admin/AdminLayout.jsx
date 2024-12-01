@@ -1,4 +1,4 @@
-import { Sidebar, SidebarItem, SidebarItems } from "flowbite-react";
+import {Button, Sidebar, SidebarItem, SidebarItems} from "flowbite-react";
 import { Link, Outlet } from "react-router-dom";
 import {
   HiArrowSmRight, HiChartPie, HiInbox,
@@ -7,8 +7,11 @@ import {
 import {FaLayerGroup} from "react-icons/fa";
 import {TbCategoryFilled} from "react-icons/tb";
 import {FaKitchenSet} from "react-icons/fa6";
+import {useContext} from "react";
+import AuthContext from "../contexts/AuthProvider.jsx";
 
 export default function AdminLayout() {
+  const { logout } = useContext(AuthContext);
   return (
     <div className="flex h-screen w-screen bg-blue-200">
       <Sidebar className="fixed w-64 bg-gray-200 shadow-lg z-40">
@@ -43,6 +46,11 @@ export default function AdminLayout() {
             <Sidebar.Item icon={TbCategoryFilled}>
               <Link to="categories">QL danh mục</Link>
             </Sidebar.Item>
+          </Sidebar.ItemGroup>
+          <Sidebar.ItemGroup>
+            <SidebarItem icon={HiArrowSmRight} onClick={() => logout()} className={"cursor-pointer"}>
+              Đăng xuất
+            </SidebarItem>
           </Sidebar.ItemGroup>
         </Sidebar.Items>
       </Sidebar>

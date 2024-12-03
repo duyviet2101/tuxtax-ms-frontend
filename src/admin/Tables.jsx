@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useNavigate, useSearchParams} from "react-router-dom";
+import {Link, useNavigate, useSearchParams} from "react-router-dom";
 import {axios} from "../services/requests.js";
 import moment from "moment";
 import pushToast from "../helpers/sonnerToast.js";
@@ -130,25 +130,36 @@ function UpdateTableForm({
           <div className="mb-2">
             <h1 className="text-gray-900 dark:text-white">Mã QR</h1>
 
-            <div className="flex gap-2 items-center">
-              <QRCode value={`https://tuxtax-ms-frontend.vercel.app/${id}`} size={256}/>
-              <Button
-                size={"xs"}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  const canvas = document.getElementById(`qrcode-${id}`);
-                  const pngUrl = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-                  let downloadLink = document.createElement("a");
-                  downloadLink.href = pngUrl;
-                  downloadLink.download = `QR-${data.name}.png`;
-                  document.body.appendChild(downloadLink);
-                  downloadLink.click();
-                  document.body.removeChild(downloadLink);
-                }}
-              >
-                <FaDownload className="mr-2 h-3 w-3"/>
-                Tải QR
-              </Button>
+            <div className="flex gap-2 items-center justify-center">
+              <QRCode value={`${import.meta.env.VITE_QR_CODE_URL || "http://localhost:3056"}/${id}`} size={256}/>
+              <div className={"flex flex-col gap-2"}>
+                <Button
+                  size={"xs"}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const canvas = document.getElementById(`qrcode-${id}`);
+                    const pngUrl = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+                    let downloadLink = document.createElement("a");
+                    downloadLink.href = pngUrl;
+                    downloadLink.download = `QR-${data.name}.png`;
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+                  }}
+                >
+                  <FaDownload className="mr-2 h-3 w-3"/>
+                  Tải QR
+                </Button>
+                <Button
+                  size={"xs"}
+                  color={"warning"}
+                  as={Link}
+                  to={`/${id}`}
+                  target={"_blank"}
+                >
+                  Trang đặt bàn
+                </Button>
+              </div>
             </div>
           </div>
 
@@ -470,7 +481,7 @@ export default function TablesManager() {
         actions: (
           <div className={"flex gap-2 justify-center items-center"}>
             <div className={"hidden"}>
-              <QRCodeCanvas id={`qrcode-${table._id}`} value={`https://tuxtax-ms-frontend.vercel.app/${table._id}`} size={256}/>
+              <QRCodeCanvas id={`qrcode-${table._id}`} value={`${import.meta.env.VITE_QR_CODE_URL || "http://localhost:3056"}/${table._id}`} size={256}/>
             </div>
             <Button
               size={"xs"}
@@ -488,6 +499,18 @@ export default function TablesManager() {
             >
               <FaDownload className="mr-2 h-3 w-3"/>
               Tải QR
+            </Button>
+            <Button
+              size={"xs"}
+              color={"warning"}
+              as={Link}
+              to={`/${table._id}`}
+              target={"_blank"}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              Trang đặt bàn
             </Button>
           </div>
         )
